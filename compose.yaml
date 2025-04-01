@@ -1,0 +1,36 @@
+services:
+
+  postgres:
+    image: postgres:16.8-alpine3.20
+    container_name: zapbackend-db
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: zapbackend
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - zapbackend-db:/var/lib/postgresql/data
+    networks:
+      - zapbackend-network
+
+  pgadmin4:
+    image: dpage/pgadmin4:9.0.0
+    container_name: zapbackend-pgadmin4
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+    ports:
+      - "15432:80"
+    networks:
+      - zapbackend-network
+
+volumes:
+  zapbackend-db:
+    driver: local
+
+networks:
+  zapbackend-network:
+    driver: bridge
