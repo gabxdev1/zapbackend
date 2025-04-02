@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.security.services;
 
 import br.com.gabxdev.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

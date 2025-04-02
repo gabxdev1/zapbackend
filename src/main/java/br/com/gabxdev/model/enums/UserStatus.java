@@ -1,4 +1,4 @@
-package br.com.gabxdev.enums;
+package br.com.gabxdev.model.enums;
 
 public enum UserStatus {
     ONLINE,

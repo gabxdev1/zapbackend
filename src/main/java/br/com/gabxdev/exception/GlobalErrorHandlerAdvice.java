@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,7 @@ public class GlobalErrorHandlerAdvice {
                 .path(path)
                 .error(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase())
                 .message(errorMessages)
-                .timestamp(OffsetDateTime.now())
+                .timestamp(Instant.now())
                 .build();
 
         return ResponseEntity
@@ -55,7 +55,7 @@ public class GlobalErrorHandlerAdvice {
                 .path(path)
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message(ex.getMessage())
-                .timestamp(OffsetDateTime.now())
+                .timestamp(Instant.now())
                 .build();
 
         return ResponseEntity
@@ -72,7 +72,7 @@ public class GlobalErrorHandlerAdvice {
                 .path(path)
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message(ex.getMessage())
-                .timestamp(OffsetDateTime.now())
+                .timestamp(Instant.now())
                 .build();
 
         return ResponseEntity
@@ -89,7 +89,7 @@ public class GlobalErrorHandlerAdvice {
                 .path(path)
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message(ex.getMessage())
-                .timestamp(OffsetDateTime.now())
+                .timestamp(Instant.now())
                 .build();
 
         return ResponseEntity
@@ -106,7 +106,7 @@ public class GlobalErrorHandlerAdvice {
                 .path(path)
                 .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .message(ex.getMessage())
-                .timestamp(OffsetDateTime.now())
+                .timestamp(Instant.now())
                 .build();
 
         return ResponseEntity
