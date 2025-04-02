@@ -97,51 +97,6 @@ public class GlobalErrorHandlerAdvice {
                 .body(error);
     }
 
-    //UnsupportedJwtException
-    //JwtException
-    //ExpiredJwtException
-
-
-    @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<ApiError> handleExpiredJwtException(final SignatureException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .path(path)
-                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                .message("JWT signature does not is validated")
-                .timestamp(OffsetDateTime.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(error);
-    }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ApiError> handleExpiredJwtException(final ExpiredJwtException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var expiration = ex.getClaims().getExpiration();
-        var expiredMs = Date.from(Instant.now()).getTime() - ex.getClaims().getIssuedAt().getTime();
-
-        var message = "Token expired %d milliseconds ago at %s.".formatted(expiredMs, expiration.toString());
-
-        var error = ApiError.builder()
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .path(path)
-                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                .message(message)
-                .timestamp(OffsetDateTime.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(error);
-    }
-
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(final Exception ex, final HttpServletRequest request) {
         var path = request.getRequestURI();
