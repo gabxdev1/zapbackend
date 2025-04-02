@@ -23,3 +23,10 @@ spring:
     enabled: off
   jackson:
     time-zone: UTC
+zap-backend:
+  jwt:
+    expiration-seconds: 60
+    secret-key: ${SECRET_KEY}
+logging:
+  level:
+    org.springframework.security: debug
