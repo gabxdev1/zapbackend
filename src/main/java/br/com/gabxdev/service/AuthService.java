@@ -26,13 +26,13 @@ public class AuthService {
     }
 
     public TokenJwtResponse loginUser(String email, String password) {
-        var user = customDetailsService.loadUserByUsername(email);
+        var user = (User) customDetailsService.loadUserByUsername(email);
 
         if (!passwordEncoder.matches(password.trim(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
 
-        var accessToken = jwtUtil.generateToken(email);
+        var accessToken = jwtUtil.generateToken(user.getId(), user.getRole());
 
         var expirationSeconds = properties.getJwt().getExpirationSeconds();
 

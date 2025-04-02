@@ -25,7 +25,8 @@ spring:
     time-zone: UTC
 zap-backend:
   jwt:
-    expiration-seconds: 3500
+    expiration-seconds: 3600
+    secret-key: "asd"
 logging:
   level:
     org.springframework.security: debug

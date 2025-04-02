@@ -1,6 +1,7 @@
 package br.com.gabxdev.security;
 
 import br.com.gabxdev.exception.ApiError;
+import br.com.gabxdev.repository.UserRepository;
 import br.com.gabxdev.service.CustomDetailsService;
 import br.com.gabxdev.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,15 +29,16 @@ import static br.com.gabxdev.commons.Constants.WHITE_LIST;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final CustomDetailsService customDetailsService;
+    private final UserRepository repository;
     private final ObjectMapper mapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try {
             var tokenJwt = retrieveToken(request);
-            var email = jwtUtil.extractEmail(tokenJwt);
-            var user = customDetailsService.loadUserByUsername(email);
+            var userId = jwtUtil.extractUserId(tokenJwt);
+            var user = repository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
             var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -66,7 +68,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (!(header != null && header.startsWith("Bearer ") && !header.substring(7).isEmpty())) {
             throw new RuntimeException("Invalid token.");
         }
-
         return header.substring(7);
     }
 
