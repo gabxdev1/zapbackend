@@ -1,10 +1,10 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.security.services;
 
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.properties.ZapBackendProperties;
 import br.com.gabxdev.repository.UserRepository;
 import br.com.gabxdev.response.TokenJwtResponse;
-import br.com.gabxdev.util.JwtUtil;
+import br.com.gabxdev.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,6 +1,6 @@
-package br.com.gabxdev.config;
+package br.com.gabxdev.security;
 
-import br.com.gabxdev.security.JwtFilter;
+import br.com.gabxdev.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

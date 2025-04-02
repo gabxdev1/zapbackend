@@ -10,7 +10,7 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
-    @Mapping(target = "role", expression = "java(br.com.gabxdev.enums.Role.USER)")
+    @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")
     User toEntity(RegisterPostRequest request);
 
     RegisterPostResponse toRegisterPostResponse(User user);

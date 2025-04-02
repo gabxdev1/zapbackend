@@ -1,7 +1,7 @@
 package br.com.gabxdev.model;
 
-import br.com.gabxdev.enums.Role;
-import br.com.gabxdev.enums.UserStatus;
+import br.com.gabxdev.model.enums.Role;
+import br.com.gabxdev.model.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

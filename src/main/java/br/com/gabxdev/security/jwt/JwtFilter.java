@@ -1,9 +1,7 @@
-package br.com.gabxdev.security;
+package br.com.gabxdev.security.jwt;
 
 import br.com.gabxdev.exception.ApiError;
 import br.com.gabxdev.repository.UserRepository;
-import br.com.gabxdev.service.CustomDetailsService;
-import br.com.gabxdev.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 
 import static br.com.gabxdev.commons.Constants.WHITE_LIST;
 
@@ -54,7 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     .path(request.getRequestURI())
                     .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                     .message("Invalid or expired token.")
-                    .timestamp(OffsetDateTime.now())
+                    .timestamp(Instant.now())
                     .build();
 
             response.getWriter().write(mapper.writeValueAsString(error));
