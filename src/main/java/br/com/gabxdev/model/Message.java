@@ -38,6 +38,10 @@ public class Message {
 
     @PrePersist
     private void validateMessage() {
+        assertThatMessageMustHaveUserOrGroupNotBoth();
+    }
+
+    private void assertThatMessageMustHaveUserOrGroupNotBoth() {
         if ((recipientUser == null && recipientGroup == null) ||
             (recipientUser != null && recipientGroup != null)) {
             throw new IllegalArgumentException("A message must have a recipient (user or group, but not both).");
