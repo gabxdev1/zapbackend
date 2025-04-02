@@ -1,6 +1,7 @@
 package br.com.gabxdev.model.pk;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.IdClass;
 import lombok.*;
 
 @Embeddable
