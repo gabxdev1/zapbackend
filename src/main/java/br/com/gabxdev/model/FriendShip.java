@@ -12,7 +12,7 @@ import lombok.*;
 @EqualsAndHashCode(of = "friendshipId")
 @Builder
 @Table(name = "friendships")
-public class FriendShip {
+public class FriendShip { //implements audit
 
     @EmbeddedId
     private FriendShipId friendshipId;
@@ -24,4 +24,6 @@ public class FriendShip {
     @ManyToOne
     @MapsId("userId2")
     private User user2;
+
+    private boolean blocked;
 }

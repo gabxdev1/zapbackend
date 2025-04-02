@@ -20,9 +20,14 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 100)
     private String name;
 
     private String description;
+
+    @ManyToOne
+    @JoinColumn(nullable = false, updatable = false)
+    private User createdBy;
 
     @CreationTimestamp(source = SourceType.DB)
     private Instant createdAt;
