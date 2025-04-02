@@ -35,4 +35,11 @@ public class AuthController {
         var tokenJwt = authService.loginUser(request.email(), request.password());
         return ResponseEntity.ok().body(tokenJwt);
     }
+
+    @GetMapping
+    public ResponseEntity<String> testAuth() {
+        return ResponseEntity.ok().body("Auth successful");
+    }
+
+
 }
