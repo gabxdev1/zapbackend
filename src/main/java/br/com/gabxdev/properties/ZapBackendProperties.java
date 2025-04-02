@@ -1,5 +1,7 @@
 package br.com.gabxdev.properties;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,12 +16,16 @@ import org.springframework.validation.annotation.Validated;
 @Component
 public class ZapBackendProperties {
 
-    @NotNull
+    @Valid
     private Jwt jwt;
 
     @Getter
     @Setter
     public static class Jwt {
+        @NotBlank
+        private String secretKey;
+
+        @NotNull
         private long expirationSeconds;
     }
 }
