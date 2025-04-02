@@ -1,0 +1,45 @@
+package br.com.gabxdev.service;
+
+import br.com.gabxdev.model.User;
+import br.com.gabxdev.properties.ZapBackendProperties;
+import br.com.gabxdev.repository.UserRepository;
+import br.com.gabxdev.response.TokenJwtResponse;
+import br.com.gabxdev.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final CustomDetailsService customDetailsService;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
+    private final ZapBackendProperties properties;
+    private final UserRepository userRepository;
+
+    public User registerUser(User newUser) {
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        return userRepository.save(newUser);
+    }
+
+    public TokenJwtResponse loginUser(String email, String password) {
+        var user = customDetailsService.loadUserByUsername(email);
+
+        if (!passwordEncoder.matches(password.trim(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid password");
+        }
+
+        var accessToken = jwtUtil.generateToken(email);
+
+        var expirationSeconds = properties.getJwt().getExpirationSeconds();
+
+        return TokenJwtResponse.builder()
+                .accessToken(accessToken)
+                .expiresIn(expirationSeconds)
+                .tokenType("Bearer")
+                .build();
+    }
+}
