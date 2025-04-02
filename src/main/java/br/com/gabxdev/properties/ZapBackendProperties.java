@@ -20,8 +20,6 @@ public class ZapBackendProperties {
     @Getter
     @Setter
     public static class Jwt {
-        private String secretKey;
-
         private long expirationSeconds;
     }
 }
