@@ -5,15 +5,13 @@ import br.com.gabxdev.request.UserPutRequest;
 import br.com.gabxdev.response.UserGetResponse;
 import br.com.gabxdev.response.UserPutResponse;
 import br.com.gabxdev.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/users")
@@ -35,7 +33,9 @@ public class UserController {
         return ResponseEntity.ok(mapper.toUserGetResponse(user));
     }
 
-    public ResponseEntity<UserPutResponse> updatedUser(UserPutRequest request) {
+    @PutMapping
+    @PreAuthorize("(#request.id() == authentication.principal.id && hasRole('USER')) || hasRole('ADMIN')")
+    public ResponseEntity<UserPutResponse> updatedUser(@Valid @RequestBody UserPutRequest request) {
         log.debug("Update user: {}", request);
 
         var userUpdated = service.update(mapper.toEntity(request));
