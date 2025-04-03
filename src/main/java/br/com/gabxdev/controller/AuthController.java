@@ -6,7 +6,7 @@ import br.com.gabxdev.request.RegisterPostRequest;
 import br.com.gabxdev.response.RegisterPostResponse;
 import br.com.gabxdev.response.TokenJwtResponse;
 import br.com.gabxdev.security.services.AuthService;
-import br.com.gabxdev.util.HeaderUtils;
+import br.com.gabxdev.commons.HeaderUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenJwtResponse> loginUser(@Valid @RequestBody LoginPostRequest request) {
         var tokenJwt = authService.loginUser(request.email(), request.password());
+
         return ResponseEntity.ok().body(tokenJwt);
     }
 
