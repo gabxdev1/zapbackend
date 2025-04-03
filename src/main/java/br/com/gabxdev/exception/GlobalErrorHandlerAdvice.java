@@ -18,186 +18,78 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalErrorHandlerAdvice {
 
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFoundException(final NotFoundException ex, final HttpServletRequest request) {
-
+    private ResponseEntity<ApiError> prepareResponse(final HttpStatus status, final HttpServletRequest request, final String message) {
         var path = request.getRequestURI();
 
         var error = ApiError.builder()
-                .status(HttpStatus.NOT_FOUND.value())
+                .status(status.value())
                 .path(path)
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .message(ex.getMessage())
+                .error(status.getReasonPhrase())
+                .message(message)
                 .timestamp(Instant.now())
                 .build();
 
-
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(status)
                 .body(error);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFoundException(final NotFoundException ex, final HttpServletRequest request) {
+        return prepareResponse(HttpStatus.NOT_FOUND, request, ex.getMessage());
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ApiError> handleNotFoundException(final EmailAlreadyExistsException ex, final HttpServletRequest request) {
-
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .path(path)
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+        return prepareResponse(HttpStatus.BAD_REQUEST, request, ex.getMessage());
     }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex,
                                                                           final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
         var errorMessages = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
 
-        var error = ApiError.builder()
-                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-                .path(path)
-                .error(HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase())
-                .message(errorMessages)
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(error);
+        return prepareResponse(HttpStatus.UNPROCESSABLE_ENTITY, request, errorMessages);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleHttpMessageNotReadableException(final HttpMessageNotReadableException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .path(path)
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+        return prepareResponse(HttpStatus.BAD_REQUEST, request, ex.getMessage());
     }
 
     @ExceptionHandler(JsonMappingException.class)
     public ResponseEntity<ApiError> handleJsonMappingException(final JsonMappingException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .path(path)
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+        return prepareResponse(HttpStatus.BAD_REQUEST, request, ex.getMessage());
     }
 
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ApiError> handleTypeMismatchException(final TypeMismatchException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .path(path)
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(error);
+        return prepareResponse(HttpStatus.BAD_REQUEST, request, ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleForbiddenException(final AccessDeniedException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.FORBIDDEN.value())
-                .path(path)
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(error);
+        return prepareResponse(HttpStatus.FORBIDDEN, request, ex.getMessage());
     }
 
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<ApiError> handleUserBlockedException(final UserBlockedException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.FORBIDDEN.value())
-                .path(path)
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(error);
+        return prepareResponse(HttpStatus.FORBIDDEN, request, ex.getMessage());
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiError> handleForbiddenException(final ForbiddenException ex, final HttpServletRequest request) {
-        var path = request.getRequestURI();
-
-        var error = ApiError.builder()
-                .status(HttpStatus.FORBIDDEN.value())
-                .path(path)
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-                .message(ex.getMessage())
-                .timestamp(Instant.now())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(error);
+        return prepareResponse(HttpStatus.FORBIDDEN, request, ex.getMessage());
     }
 
 
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<ApiError> handleException(final Exception ex, final HttpServletRequest request) {
-//        var path = request.getRequestURI();
-//
-//        var error = ApiError.builder()
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-//                .path(path)
-//                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-//                .message(ex.getMessage())
-//                .timestamp(Instant.now())
-//                .build();
-//
-//        return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(error);
+//        return prepareResponse(HttpStatus.INTERNAL_SERVER_ERROR, request, ex.getMessage());
 //    }
 }

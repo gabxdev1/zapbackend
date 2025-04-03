@@ -125,5 +125,4 @@ public class FriendRequestService {
             throw new ForbiddenException("It is not possible to reject a friend request that has already been accepted.");
         }
     }
-
 }
