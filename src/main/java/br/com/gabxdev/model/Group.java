@@ -1,11 +1,8 @@
 package br.com.gabxdev.model;
 
+import br.com.gabxdev.Audit.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SourceType;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "groups")
@@ -14,7 +11,8 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Group {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class Group extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +22,4 @@ public class Group {
     private String name;
 
     private String description;
-
-    @ManyToOne
-    @JoinColumn(nullable = false, updatable = false)
-    private User createdBy;
-
-    @CreationTimestamp(source = SourceType.DB)
-    private Instant createdAt;
 }
