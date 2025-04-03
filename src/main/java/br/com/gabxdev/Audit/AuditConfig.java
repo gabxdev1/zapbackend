@@ -1,4 +1,4 @@
-package br.com.gabxdev.config;
+package br.com.gabxdev.Audit;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
