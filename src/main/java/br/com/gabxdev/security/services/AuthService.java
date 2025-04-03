@@ -1,5 +1,6 @@
 package br.com.gabxdev.security.services;
 
+import br.com.gabxdev.exception.EmailAlreadyExistsException;
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.properties.ZapBackendProperties;
 import br.com.gabxdev.repository.UserRepository;
@@ -21,7 +22,10 @@ public class AuthService {
     private final UserRepository userRepository;
 
     public User registerUser(User newUser) {
+        assertEmailDoesNotExists(newUser.getEmail());
+
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
         return userRepository.save(newUser);
     }
 
@@ -41,5 +45,10 @@ public class AuthService {
                 .expiresIn(expirationSeconds)
                 .tokenType("Bearer")
                 .build();
+    }
+
+    public void assertEmailDoesNotExists(String email) {
+        if (userRepository.existsByEmailIgnoreCase(email))
+            throw new EmailAlreadyExistsException("E-mail %s already exists".formatted(email));
     }
 }
