@@ -1,6 +1,6 @@
 package br.com.gabxdev.Audit;
 
-import br.com.gabxdev.commons.UserUtil;
+import br.com.gabxdev.commons.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuditorAwareImpl implements AuditorAware<Long> {
 
-    private final UserUtil userUtil;
+    private final AuthUtil authUtil;
 
     @Override
     public Optional<Long> getCurrentAuditor() {
-        return userUtil.getCurrentUserId();
+        return authUtil.getCurrentUserId();
     }
 }

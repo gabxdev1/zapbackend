@@ -10,7 +10,7 @@ import java.util.Optional;
 import static br.com.gabxdev.commons.Constants.NEW_USER;
 
 @Component
-public class UserUtil {
+public class AuthUtil {
     public Optional<Long> getCurrentUserId() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -20,6 +20,12 @@ public class UserUtil {
 
         var userAuthenticated = (User) auth.getPrincipal();
         return Optional.of(userAuthenticated.getId());
+    }
+
+    public User getCurrentUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        return (User) auth.getPrincipal();
     }
 
     private boolean isNewUser(Authentication auth) {
