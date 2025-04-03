@@ -7,12 +7,11 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
@@ -133,20 +132,38 @@ public class GlobalErrorHandlerAdvice {
                 .body(error);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleException(final Exception ex, final HttpServletRequest request) {
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleForbiddenException(final AccessDeniedException ex, final HttpServletRequest request) {
         var path = request.getRequestURI();
 
         var error = ApiError.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .status(HttpStatus.FORBIDDEN.value())
                 .path(path)
-                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
                 .message(ex.getMessage())
                 .timestamp(Instant.now())
                 .build();
 
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.FORBIDDEN)
                 .body(error);
     }
+
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiError> handleException(final Exception ex, final HttpServletRequest request) {
+//        var path = request.getRequestURI();
+//
+//        var error = ApiError.builder()
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                .path(path)
+//                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+//                .message(ex.getMessage())
+//                .timestamp(Instant.now())
+//                .build();
+//
+//        return ResponseEntity
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(error);
+//    }
 }

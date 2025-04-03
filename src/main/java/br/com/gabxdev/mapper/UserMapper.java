@@ -2,7 +2,10 @@ package br.com.gabxdev.mapper;
 
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.request.RegisterPostRequest;
+import br.com.gabxdev.request.UserPutRequest;
 import br.com.gabxdev.response.RegisterPostResponse;
+import br.com.gabxdev.response.UserGetResponse;
+import br.com.gabxdev.response.UserPutResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -13,5 +16,12 @@ public interface UserMapper {
     @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")
     User toEntity(RegisterPostRequest request);
 
+    @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")
+    User toEntity(UserPutRequest request);
+
     RegisterPostResponse toRegisterPostResponse(User user);
+
+    UserGetResponse toUserGetResponse(User user);
+
+    UserPutResponse toUserPutResponse(User user);
 }
