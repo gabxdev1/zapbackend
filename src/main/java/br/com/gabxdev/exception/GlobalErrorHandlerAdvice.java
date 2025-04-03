@@ -10,13 +10,53 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalErrorHandlerAdvice {
 
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFoundException(final NotFoundException ex, final HttpServletRequest request) {
+
+        var path = request.getRequestURI();
+
+        var error = ApiError.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .path(path)
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
+
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleNotFoundException(final EmailAlreadyExistsException ex, final HttpServletRequest request) {
+
+        var path = request.getRequestURI();
+
+        var error = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .path(path)
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
+
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleMethodArgumentNotValidException(final MethodArgumentNotValidException ex,
