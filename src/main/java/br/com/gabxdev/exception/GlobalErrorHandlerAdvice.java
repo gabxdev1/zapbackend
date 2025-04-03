@@ -149,6 +149,40 @@ public class GlobalErrorHandlerAdvice {
                 .body(error);
     }
 
+    @ExceptionHandler(UserBlockedException.class)
+    public ResponseEntity<ApiError> handleUserBlockedException(final UserBlockedException ex, final HttpServletRequest request) {
+        var path = request.getRequestURI();
+
+        var error = ApiError.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(path)
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .message(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbiddenException(final ForbiddenException ex, final HttpServletRequest request) {
+        var path = request.getRequestURI();
+
+        var error = ApiError.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .path(path)
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .message(ex.getMessage())
+                .timestamp(Instant.now())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
+
 
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<ApiError> handleException(final Exception ex, final HttpServletRequest request) {

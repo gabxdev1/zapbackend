@@ -1,8 +1,9 @@
 package br.com.gabxdev.model;
 
+import br.com.gabxdev.model.pk.GroupMemberId;
+import br.com.gabxdev.model.pk.GroupMessageReadId;
 import br.com.gabxdev.model.pk.UserGroupId;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
@@ -17,7 +18,18 @@ import java.time.Instant;
 public class GroupMessageRead {
 
     @EmbeddedId
-    private UserGroupId id;
+    private GroupMessageReadId id;
+
+    @ManyToOne
+    @MapsId("groupMessageId")
+    @JoinColumn(name = "group_message_id", nullable = false, updatable = false)
+    private GroupMessage message;
+
+    @ManyToOne
+    @MapsId(value = "userId")
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    private User user;
+
 
     private Instant readAt;
 }

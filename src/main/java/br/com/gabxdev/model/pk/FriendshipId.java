@@ -1,7 +1,11 @@
 package br.com.gabxdev.model.pk;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 @Embeddable
 @AllArgsConstructor
@@ -10,9 +14,11 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @Builder
-public class FriendShipId {
+public class FriendshipId {
 
+    @Column(name = "user1_id", nullable = false)
     private Long userId1;
 
+    @Column(name = "user2_Id", nullable = false)
     private Long userId2;
 }

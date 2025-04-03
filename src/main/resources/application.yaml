@@ -16,7 +16,7 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
-        format_sql: true
+        format_sql: false
     hibernate:
       ddl-auto: update
   flyway:
@@ -30,3 +30,4 @@ zap-backend:
 logging:
   level:
     org.springframework.security: debug
+    br.com.gabxdev: debug
