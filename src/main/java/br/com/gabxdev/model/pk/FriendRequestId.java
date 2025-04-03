@@ -14,11 +14,11 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 @Builder
-public class UserGroupId {
+public class FriendRequestId {
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
 
-    @Column(name = "group_id", nullable = false)
-    private Long groupId;
+    @Column(name = "receiver_id", nullable = false)
+    private Long receiverId;
 }

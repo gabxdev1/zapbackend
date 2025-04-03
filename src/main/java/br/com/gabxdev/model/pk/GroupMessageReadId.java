@@ -8,17 +8,17 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Embeddable
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @Builder
-public class UserGroupId {
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+public class GroupMessageReadId {
+
+    @Column(name = "group_message_id", nullable = false)
+    private Long groupMessageId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "group_id", nullable = false)
-    private Long groupId;
 }

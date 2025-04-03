@@ -9,12 +9,14 @@ import br.com.gabxdev.security.services.AuthService;
 import br.com.gabxdev.commons.HeaderUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final UserMapper userMapper;
@@ -23,6 +25,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterPostResponse> registerUser(@Valid @RequestBody RegisterPostRequest request) {
+        log.debug("Received request to register user");
+
         var savedUser = authService.registerUser(userMapper.toEntity(request));
 
         var headerLocation = headerUtils.createHeaderLocation(savedUser.getId().toString());
@@ -32,7 +36,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenJwtResponse> loginUser(@Valid @RequestBody LoginPostRequest request) {
+        log.debug("Received request to login user");
+
         var tokenJwt = authService.loginUser(request.email(), request.password());
+
+        log.debug("Logged in user successfully with token {}", tokenJwt);
 
         return ResponseEntity.ok().body(tokenJwt);
     }
