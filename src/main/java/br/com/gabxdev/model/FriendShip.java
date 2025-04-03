@@ -12,7 +12,7 @@ import lombok.*;
 @EqualsAndHashCode(of = "friendshipId")
 @Builder
 @Table(name = "friendships")
-public class FriendShip { //implements audit
+public class FriendShip {
 
     @EmbeddedId
     private FriendShipId friendshipId;
