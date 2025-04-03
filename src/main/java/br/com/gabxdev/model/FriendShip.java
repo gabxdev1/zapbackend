@@ -1,5 +1,6 @@
 package br.com.gabxdev.model;
 
+import br.com.gabxdev.Audit.Auditable;
 import br.com.gabxdev.model.pk.FriendShipId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,10 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "friendshipId")
+@EqualsAndHashCode(of = "friendshipId", callSuper = false)
 @Builder
 @Table(name = "friendships")
-public class FriendShip {
+public class FriendShip extends Auditable {
 
     @EmbeddedId
     private FriendShipId friendshipId;

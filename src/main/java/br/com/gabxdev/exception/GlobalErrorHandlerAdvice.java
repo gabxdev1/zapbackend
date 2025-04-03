@@ -1,8 +1,6 @@
 package br.com.gabxdev.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -14,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.time.Instant;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice

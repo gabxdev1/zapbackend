@@ -1,6 +1,7 @@
 package br.com.gabxdev.model;
 
 
+import br.com.gabxdev.Audit.Auditable;
 import br.com.gabxdev.model.pk.UserGroupId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,8 +15,8 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class GroupMember {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class GroupMember extends Auditable {
 
     @EmbeddedId
     private UserGroupId id;

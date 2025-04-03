@@ -1,5 +1,6 @@
 package br.com.gabxdev.model;
 
+import br.com.gabxdev.Audit.Auditable;
 import br.com.gabxdev.model.enums.Role;
 import br.com.gabxdev.model.enums.UserStatus;
 import jakarta.persistence.*;
@@ -19,8 +20,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+@EqualsAndHashCode(of = "id", callSuper = false)
+public class User extends Auditable implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
