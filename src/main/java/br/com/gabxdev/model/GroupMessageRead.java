@@ -1,8 +1,6 @@
 package br.com.gabxdev.model;
 
-import br.com.gabxdev.model.pk.GroupMemberId;
 import br.com.gabxdev.model.pk.GroupMessageReadId;
-import br.com.gabxdev.model.pk.UserGroupId;
 import jakarta.persistence.*;
 import lombok.*;
 
