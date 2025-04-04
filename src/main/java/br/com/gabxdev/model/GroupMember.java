@@ -29,5 +29,5 @@ public class GroupMember extends Auditable {
     @JoinColumn(name = "group_id", nullable = false, updatable = false)
     private Group group;
 
-    private boolean isAdmin;
+    private boolean isModerator;
 }
