@@ -2,8 +2,7 @@ package br.com.gabxdev.response.projection;
 
 import java.time.Instant;
 
-public interface UserPendingFriendRequestGetProjection {
-
+public interface UserGetProjection {
     Long getId();
 
     String getFirstName();
@@ -13,6 +12,4 @@ public interface UserPendingFriendRequestGetProjection {
     String getEmail();
 
     Instant getLastSeen();
-
-    Instant getCreatedAt();
 }

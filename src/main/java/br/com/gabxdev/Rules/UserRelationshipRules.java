@@ -2,7 +2,7 @@ package br.com.gabxdev.Rules;
 
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.model.pk.FriendshipId;
-import br.com.gabxdev.repository.FriendshipRepository;
+import br.com.gabxdev.repository.UserBlockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserRelationshipRules {
 
-    private final FriendshipRepository friendshipRepository;
+    private final UserBlockRepository userBlockRepository;
 
     public void assertNotSendingRequestToSelf(Long toId, Long fromId) {
         if (toId.equals(fromId)) {
@@ -18,7 +18,10 @@ public class UserRelationshipRules {
         }
     }
 
-    public boolean friendshipIsBlocked(FriendshipId friendshipId) {
-        return friendshipRepository.existsByIdAndBlockedIsTrue(friendshipId);
+    public boolean friendIsBlocked(FriendshipId friendshipId) {
+        var idUserId1 = friendshipId.getUserId1();
+        var idUserId2 = friendshipId.getUserId2();
+
+        return userBlockRepository.isBlocked(idUserId1, idUserId2);
     }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -37,6 +38,14 @@ public class UserService {
         }
 
         return repository.save(userToUpdate);
+    }
+
+    public void updateLastSeen(Long userId) {
+        repository.findById(userId)
+                .ifPresent(user -> {
+                    user.setLastSeen(Instant.now());
+                    repository.save(user);
+                });
     }
 
     public void assertEmailDoesNotExists(String email, long id) {

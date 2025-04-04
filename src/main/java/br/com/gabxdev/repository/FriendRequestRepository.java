@@ -10,13 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, FriendRequestId> {
-    boolean existsByIdAndStatusEquals(FriendRequestId id, RequestStatus status);
-
-    boolean existsByIdAndStatusNot(FriendRequestId id, RequestStatus accepted);
-
-    Page<FriendRequest> findById_SenderId(Long idSenderId, Pageable pageable);
 
     Page<SentPendingFriendRequestProjection> findAllById_SenderIdAndStatusNot(Long idSenderId, RequestStatus status, Pageable pageable);
 
     Page<ReceivedPendingFriendRequestProjection> findAllById_ReceiverIdAndStatusNot(Long idReceiverId, RequestStatus status, Pageable pageable);
+
+    boolean existsBySenderIdAndReceiverIdAndStatus(Long senderId, Long receiverId, RequestStatus status);
 }

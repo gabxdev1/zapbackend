@@ -13,16 +13,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface FriendRequestMapper {
 
-    @Mapping(target = "senderId", expression = "java(getAuthenticatedUserId())")
+    @Mapping(target = "senderId", expression = "java(getIdCurrentUser())")
     FriendRequestId toFriendRequestId(FriendRequestPostRequest request);
 
-    @Mapping(target = "receiverId", expression = "java(getAuthenticatedUserId())")
+    @Mapping(target = "receiverId", expression = "java(getIdCurrentUser())")
     FriendRequestId toFriendRequestId(FriendRequestPutRequest request);
 
-    @Mapping(target = "receiverId", expression = "java(getAuthenticatedUserId())")
+    @Mapping(target = "receiverId", expression = "java(getIdCurrentUser())")
     FriendRequestId toFriendRequestId(FriendRequestDeleteRequest request);
 
-    default Long getAuthenticatedUserId() {
+    default Long getIdCurrentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var currentUser = (User) auth.getPrincipal();
         return currentUser.getId();

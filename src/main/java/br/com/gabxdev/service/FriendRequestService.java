@@ -57,6 +57,7 @@ public class FriendRequestService {
         var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
         var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
 
+        assertNoDuplicateRequest(friendRequestId);
         assertThatFriendshipIsNotBlocked(userSender.getId(), userReceiver.getId());
 
         var friendRequestIdToSave = FriendRequestId.builder()
@@ -81,7 +82,7 @@ public class FriendRequestService {
         var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
         var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
 
-        assertThatExistFriendRequest(friendRequestId);
+        assertThatExistFriendRequestAndStatusIsPending(friendRequestId);
         assertThatFriendshipIsNotBlocked(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         var friendshipId = FriendshipId.builder()
@@ -93,7 +94,6 @@ public class FriendRequestService {
                 .id(friendshipId)
                 .user1(userSender)
                 .user2(userReceiver)
-                .blocked(false)
                 .build();
 
         var friendRequest = findByIdOrElseThrowNotFound(friendRequestId);
@@ -106,9 +106,7 @@ public class FriendRequestService {
     public void rejectFriendRequest(FriendRequestId friendRequestId) {
         rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
-        assertThatExistFriendRequest(friendRequestId);
-        assertRequestNotAlreadyAccepted(friendRequestId);
-        assertThatFriendshipIsNotBlocked(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
+        assertThatExistFriendRequestAndStatusIsPending(friendRequestId);
 
         friendRequestRepository.deleteById(friendRequestId);
     }
@@ -119,20 +117,28 @@ public class FriendRequestService {
                 .userId2(receiver)
                 .build();
 
-        if (rules.friendshipIsBlocked(friendshipId)) {
+        if (rules.friendIsBlocked(friendshipId)) {
             throw new UserBlockedException("Friendship blocked");
         }
     }
 
-    private void assertThatExistFriendRequest(FriendRequestId friendRequestId) {
-        if (!friendRequestRepository.existsById(friendRequestId)) {
-            throw new NotFoundException("Friend request %s not found".formatted(friendRequestId));
+    private void assertThatExistFriendRequestAndStatusIsPending(FriendRequestId friendRequestId) {
+        if (existsFriendRequest(friendRequestId, RequestStatus.ACCEPTED)) {
+            throw new NotFoundException("Friend request %s not found or already accepted".formatted(friendRequestId));
         }
     }
 
-    private void assertRequestNotAlreadyAccepted(FriendRequestId friendRequestId) {
-        if (friendRequestRepository.existsByIdAndStatusNot(friendRequestId, RequestStatus.ACCEPTED)) {
-            throw new ForbiddenException("It is not possible to reject a friend request that has already been accepted.");
+    private void assertNoDuplicateRequest(FriendRequestId friendRequestId) {
+        if (existsFriendRequest(friendRequestId, RequestStatus.PENDING)) {
+            throw new ForbiddenException("A pending friend request already exists between these users.");
         }
+    }
+
+    private boolean existsFriendRequest(FriendRequestId friendRequestId, RequestStatus status) {
+        var senderId = friendRequestId.getSenderId();
+        var receiverId = friendRequestId.getReceiverId();
+
+        return friendRequestRepository.existsBySenderIdAndReceiverIdAndStatus(senderId, receiverId, status) ||
+               friendRequestRepository.existsBySenderIdAndReceiverIdAndStatus(receiverId, senderId, status);
     }
 }
