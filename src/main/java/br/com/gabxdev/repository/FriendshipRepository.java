@@ -2,7 +2,7 @@ package br.com.gabxdev.repository;
 
 import br.com.gabxdev.model.Friendship;
 import br.com.gabxdev.model.pk.FriendshipId;
-import br.com.gabxdev.response.projection.FriendshipGetProjection;
+import br.com.gabxdev.response.FriendshipGetResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +12,36 @@ import java.util.Optional;
 
 public interface FriendshipRepository extends JpaRepository<Friendship, FriendshipId> {
 
-    Page<FriendshipGetProjection> findById_UserId2OrId_UserId1(Long idUserId2, Long idUserId1, Pageable pageable);
+
+    @Query("""
+            SELECT
+                new br.com.gabxdev.response.FriendshipGetResponse(
+                    CASE
+                        WHEN f.user1.id = :currentUserId THEN f.user2.id
+                        ELSE f.user1.id
+                    END,
+                    CASE
+                        WHEN f.user1.id = :currentUserId THEN f.user2.firstName
+                        ELSE f.user1.firstName
+                    END,
+                    CASE
+                        WHEN f.user1.id = :currentUserId THEN f.user2.lastName
+                        ELSE f.user1.lastName
+                    END,
+                    CASE
+                        WHEN f.user1.id = :currentUserId THEN f.user2.email
+                        ELSE f.user1.email
+                    END,
+                    CASE
+                        WHEN f.user1.id = :currentUserId THEN f.user2.lastSeen
+                        ELSE f.user1.lastSeen
+                    END,
+                    f.createdAt
+                )
+            FROM Friendship f
+            WHERE (f.user1.id = :currentUserId OR f.user2.id = :currentUserId)
+            """)
+    Page<FriendshipGetResponse> findAllFriendshipByUserIdPaginated(Long currentUuserId, Pageable pageable);
 
     @Query("""
             SELECT f FROM Friendship f

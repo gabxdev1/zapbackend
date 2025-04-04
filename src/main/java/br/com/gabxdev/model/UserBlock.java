@@ -26,4 +26,7 @@ public class UserBlock extends Auditable {
     @MapsId("blocked")
     @JoinColumn(name = "blocked_id", nullable = false)
     private User blocked;
+
+    @Column(nullable = false)
+    private boolean isBlocked;
 }

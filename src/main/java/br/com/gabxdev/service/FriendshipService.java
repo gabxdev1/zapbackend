@@ -6,7 +6,7 @@ import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.Friendship;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.repository.FriendshipRepository;
-import br.com.gabxdev.response.projection.FriendshipGetProjection;
+import br.com.gabxdev.response.FriendshipGetResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +24,9 @@ public class FriendshipService {
 
     private final AuthUtil authUtil;
 
-    public Page<FriendshipGetProjection> findAllFriendshipsPaginated(Pageable pageable) {
+    public Page<FriendshipGetResponse> findAllFriendshipsPaginated(Pageable pageable) {
         var currentUserId = authUtil.getCurrentUser().getId();
-        return repository.findById_UserId2OrId_UserId1(currentUserId, currentUserId, pageable);
+        return repository.findAllFriendshipByUserIdPaginated(currentUserId, pageable);
     }
 
     public Optional<Friendship> findById(FriendshipId id) {
