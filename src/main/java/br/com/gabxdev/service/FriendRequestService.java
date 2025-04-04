@@ -1,5 +1,6 @@
 package br.com.gabxdev.service;
 
+import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
@@ -27,12 +28,11 @@ public class FriendRequestService {
 
     private final UserService userService;
 
-    private final FriendshipService friendshipService;
-
     private final FriendshipRepository friendshipRepository;
 
     private final AuthUtil authUtil;
 
+    private final UserRelationshipRules rules;
 
     public FriendRequest findByIdOrElseThrowNotFound(FriendRequestId id) {
         return friendRequestRepository.findById(id)
@@ -52,7 +52,7 @@ public class FriendRequestService {
     }
 
     public void sendFriendRequest(FriendRequestId friendRequestId) {
-        assertNotSendingRequestToSelf(friendRequestId);
+        rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
         var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
@@ -76,7 +76,7 @@ public class FriendRequestService {
 
     @Transactional
     public void acceptFriendRequest(FriendRequestId friendRequestId) {
-        assertNotSendingRequestToSelf(friendRequestId);
+        rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
         var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
@@ -104,7 +104,7 @@ public class FriendRequestService {
     }
 
     public void rejectFriendRequest(FriendRequestId friendRequestId) {
-        assertNotSendingRequestToSelf(friendRequestId);
+        rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         assertThatExistFriendRequest(friendRequestId);
         assertRequestNotAlreadyAccepted(friendRequestId);
@@ -119,7 +119,7 @@ public class FriendRequestService {
                 .userId2(receiver)
                 .build();
 
-        if (friendshipService.friendshipIsBlocked(friendshipId)) {
+        if (rules.friendshipIsBlocked(friendshipId)) {
             throw new UserBlockedException("Friendship blocked");
         }
     }
@@ -127,12 +127,6 @@ public class FriendRequestService {
     private void assertThatExistFriendRequest(FriendRequestId friendRequestId) {
         if (!friendRequestRepository.existsById(friendRequestId)) {
             throw new NotFoundException("Friend request %s not found".formatted(friendRequestId));
-        }
-    }
-
-    private void assertNotSendingRequestToSelf(FriendRequestId friendRequestId) {
-        if (friendRequestId.getSenderId().equals(friendRequestId.getReceiverId())) {
-            throw new ForbiddenException("You are not allowed to send request to self");
         }
     }
 
