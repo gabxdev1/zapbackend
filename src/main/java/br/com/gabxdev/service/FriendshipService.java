@@ -1,5 +1,6 @@
 package br.com.gabxdev.service;
 
+import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.Friendship;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.repository.FriendshipRepository;
@@ -26,8 +27,13 @@ public class FriendshipService {
 
     }
 
-    public Page<Friendship> findAllFriendShips(Long userId, Pageable pageable) {
-        return null;
+    public Friendship findById(FriendshipId friendshipId) {
+        return repository.findById(friendshipId)
+                .orElseThrow(() -> new NotFoundException("Friendship not %s found".formatted(friendshipId)));
+    }
+
+    public Page<Friendship> findAllFriendShipsPaginated(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public boolean friendshipIsBlocked(FriendshipId friendshipId) {

@@ -1,12 +1,12 @@
 package br.com.gabxdev.controller;
 
+import br.com.gabxdev.commons.HeaderUtils;
 import br.com.gabxdev.mapper.UserMapper;
 import br.com.gabxdev.request.LoginPostRequest;
 import br.com.gabxdev.request.RegisterPostRequest;
 import br.com.gabxdev.response.RegisterPostResponse;
 import br.com.gabxdev.response.TokenJwtResponse;
 import br.com.gabxdev.security.services.AuthService;
-import br.com.gabxdev.commons.HeaderUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

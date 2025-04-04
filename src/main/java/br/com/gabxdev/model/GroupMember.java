@@ -3,11 +3,8 @@ package br.com.gabxdev.model;
 
 import br.com.gabxdev.Audit.Auditable;
 import br.com.gabxdev.model.pk.GroupMemberId;
-import br.com.gabxdev.model.pk.UserGroupId;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "group_members")

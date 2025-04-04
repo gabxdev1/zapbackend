@@ -1,5 +1,6 @@
 package br.com.gabxdev.service;
 
+import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.exception.UserBlockedException;
@@ -10,7 +11,11 @@ import br.com.gabxdev.model.pk.FriendRequestId;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.repository.FriendRequestRepository;
 import br.com.gabxdev.repository.FriendshipRepository;
+import br.com.gabxdev.response.projection.ReceivedPendingFriendRequestProjection;
+import br.com.gabxdev.response.projection.SentPendingFriendRequestProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +31,24 @@ public class FriendRequestService {
 
     private final FriendshipRepository friendshipRepository;
 
+    private final AuthUtil authUtil;
+
 
     public FriendRequest findByIdOrElseThrowNotFound(FriendRequestId id) {
         return friendRequestRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Friend request %s not found".formatted(id)));
+    }
+
+    public Page<SentPendingFriendRequestProjection> getPendingSentRequests(Pageable pageable) {
+        var currentUser = authUtil.getCurrentUser();
+
+        return friendRequestRepository.findAllById_SenderIdAndStatusNot(currentUser.getId(), RequestStatus.ACCEPTED, pageable);
+    }
+
+    public Page<ReceivedPendingFriendRequestProjection> getPendingReceivedRequests(Pageable pageable) {
+        var currentUser = authUtil.getCurrentUser();
+
+        return friendRequestRepository.findAllById_ReceiverIdAndStatusNot(currentUser.getId(), RequestStatus.ACCEPTED, pageable);
     }
 
     public void sendFriendRequest(FriendRequestId friendRequestId) {
@@ -41,7 +60,7 @@ public class FriendRequestService {
         assertThatFriendshipIsNotBlocked(userSender.getId(), userReceiver.getId());
 
         var friendRequestIdToSave = FriendRequestId.builder()
-                .senderId(userSender.getId())
+                .senderId(friendRequestId.getSenderId())
                 .receiverId(userReceiver.getId())
                 .build();
 
@@ -86,9 +105,6 @@ public class FriendRequestService {
 
     public void rejectFriendRequest(FriendRequestId friendRequestId) {
         assertNotSendingRequestToSelf(friendRequestId);
-
-        var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
-        var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
 
         assertThatExistFriendRequest(friendRequestId);
         assertRequestNotAlreadyAccepted(friendRequestId);
