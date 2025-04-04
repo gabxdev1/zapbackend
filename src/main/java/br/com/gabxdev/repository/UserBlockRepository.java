@@ -5,12 +5,14 @@ import br.com.gabxdev.model.pk.UserBlockId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface UserBlockRepository extends JpaRepository<UserBlock, UserBlockId> {
 
     @Query("""
-            SELECT COUNT(ub) FROM UserBlock ub
+            SELECT ub.isBlocked FROM UserBlock ub
             WHERE (ub.blocker.id = :idUserId1 AND ub.blocked.id = : idUserId2) OR
             (ub.blocker.id = :idUserId2 AND ub.blocked.id = :idUserId1)
             """)
-    boolean isBlocked(Long idUserId1, Long idUserId2);
+    Optional<Boolean> isBlocked(Long idUserId1, Long idUserId2);
 }

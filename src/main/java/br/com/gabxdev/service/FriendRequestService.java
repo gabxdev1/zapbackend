@@ -123,7 +123,7 @@ public class FriendRequestService {
     }
 
     private void assertThatExistFriendRequestAndStatusIsPending(FriendRequestId friendRequestId) {
-        if (existsFriendRequest(friendRequestId, RequestStatus.ACCEPTED)) {
+        if (!existsFriendRequest(friendRequestId, RequestStatus.PENDING)) {
             throw new NotFoundException("Friend request %s not found or already accepted".formatted(friendRequestId));
         }
     }

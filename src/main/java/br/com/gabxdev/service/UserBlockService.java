@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserBlockService {
@@ -53,6 +52,7 @@ public class UserBlockService {
                 .id(blockId)
                 .blocker(userBlocker)
                 .blocked(userToBlock)
+                .isBlocked(true)
                 .build();
 
         var friendshipId = FriendshipId.builder().userId1(userBlocker.getId()).userId2(userToBlock.getId()).build();

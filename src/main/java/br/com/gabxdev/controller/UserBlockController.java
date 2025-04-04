@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
-@Validated
 public class UserBlockController {
 
     private final UserBlockService service;

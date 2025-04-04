@@ -2,7 +2,7 @@ package br.com.gabxdev.controller;
 
 import br.com.gabxdev.mapper.FriendshipMapper;
 import br.com.gabxdev.request.FriendshipDeleteRequest;
-import br.com.gabxdev.response.projection.FriendshipGetProjection;
+import br.com.gabxdev.response.FriendshipGetResponse;
 import br.com.gabxdev.service.FriendshipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/user/friendship")
+@RequestMapping("/v1/users/friendships")
 @RequiredArgsConstructor
-@Validated
 public class FriendshipController {
 
     private final FriendshipService service;
@@ -26,7 +24,7 @@ public class FriendshipController {
 
     @GetMapping(headers = HttpHeaders.AUTHORIZATION)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Page<FriendshipGetProjection>> findAllFriendships(Pageable pageable) {
+    public ResponseEntity<Page<FriendshipGetResponse>> findAllFriendships(Pageable pageable) {
         var allFriendshipsPaginated = service.findAllFriendshipsPaginated(pageable);
 
         return ResponseEntity.ok().body(allFriendshipsPaginated);

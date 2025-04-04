@@ -22,6 +22,7 @@ public class UserRelationshipRules {
         var idUserId1 = friendshipId.getUserId1();
         var idUserId2 = friendshipId.getUserId2();
 
-        return userBlockRepository.isBlocked(idUserId1, idUserId2);
+        return userBlockRepository.isBlocked(idUserId1, idUserId2)
+                .orElse(false);
     }
 }
