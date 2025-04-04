@@ -1,6 +1,8 @@
 package br.com.gabxdev.controller;
 
+import br.com.gabxdev.commons.anotations.CurrentUser;
 import br.com.gabxdev.mapper.UserMapper;
+import br.com.gabxdev.model.User;
 import br.com.gabxdev.request.UserPutRequest;
 import br.com.gabxdev.response.UserGetResponse;
 import br.com.gabxdev.response.UserPutResponse;
@@ -23,18 +25,17 @@ public class UserController {
 
     private final UserMapper mapper;
 
-    @GetMapping(value = "/{id}", headers = {HttpHeaders.AUTHORIZATION})
-    @PreAuthorize("(#id == authentication.principal.id && hasRole('USER')) || hasRole('ADMIN')")
-    public ResponseEntity<UserGetResponse> findUserById(@PathVariable Long id) {
-        log.debug("Find user by id: {}", id);
+    @GetMapping(headers = {HttpHeaders.AUTHORIZATION})
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<UserGetResponse> findUserById(@CurrentUser User currentUser) {
 
-        var user = service.findByIdOrThrowNotFound(id);
+        var user = service.findByIdOrThrowNotFound(currentUser.getId());
 
         return ResponseEntity.ok(mapper.toUserGetResponse(user));
     }
 
-    @PutMapping
-    @PreAuthorize("(#request.id() == authentication.principal.id && hasRole('USER')) || hasRole('ADMIN')")
+    @PutMapping(headers = {HttpHeaders.AUTHORIZATION})
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserPutResponse> updatedUser(@Valid @RequestBody UserPutRequest request) {
         log.debug("Update user: {}", request);
 

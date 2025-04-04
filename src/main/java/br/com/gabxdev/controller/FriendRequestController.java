@@ -1,6 +1,5 @@
 package br.com.gabxdev.controller;
 
-import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.mapper.FriendRequestMapper;
 import br.com.gabxdev.request.FriendRequestDeleteRequest;
 import br.com.gabxdev.request.FriendRequestPostRequest;
@@ -28,9 +27,9 @@ public class FriendRequestController {
 
     private final FriendRequestMapper mapper;
 
-    private final AuthUtil authUtil;
 
     @GetMapping(path = "/received/pending", headers = HttpHeaders.AUTHORIZATION)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<ReceivedPendingFriendRequestProjection>> getPendingReceivedRequests(Pageable pageable) {
         log.info("Received request to get pending received friend requests");
 
@@ -40,6 +39,7 @@ public class FriendRequestController {
     }
 
     @GetMapping(path = "/sent/pending", headers = HttpHeaders.AUTHORIZATION)
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Page<SentPendingFriendRequestProjection>> getPendingSentRequests(Pageable pageable) {
         log.info("Received request to get pending sent requests");
 

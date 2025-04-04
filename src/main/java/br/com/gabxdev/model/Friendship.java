@@ -27,6 +27,4 @@ public class Friendship extends Auditable {
     @MapsId("userId2")
     @JoinColumn(name = "user_id2", nullable = false, updatable = false)
     private User user2;
-
-    private boolean blocked;
 }

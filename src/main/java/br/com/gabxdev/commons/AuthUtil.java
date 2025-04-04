@@ -1,5 +1,6 @@
 package br.com.gabxdev.commons;
 
+import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.model.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,8 +23,13 @@ public class AuthUtil {
         return Optional.of(userAuthenticated.getId());
     }
 
+
     public User getCurrentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (isNewUser(auth)) {
+            throw new ForbiddenException("You do not have permission to access this resource");
+        }
 
         return (User) auth.getPrincipal();
     }

@@ -1,16 +1,18 @@
 package br.com.gabxdev.service;
 
 import br.com.gabxdev.Rules.UserRelationshipRules;
-import br.com.gabxdev.exception.ForbiddenException;
+import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.Friendship;
-import br.com.gabxdev.model.pk.FriendRequestId;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.repository.FriendshipRepository;
+import br.com.gabxdev.response.projection.FriendshipGetProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,42 +22,30 @@ public class FriendshipService {
 
     private final UserRelationshipRules rules;
 
-    public Friendship findByIdOrElseThrowNotFound(FriendshipId friendshipId) {
-        rules.assertNotSendingRequestToSelf(friendshipId.getUserId1(), friendshipId.getUserId2());
+    private final AuthUtil authUtil;
 
-        return repository.findById(friendshipId)
-                .orElseThrow(() -> new NotFoundException("Friendship not %s found".formatted(friendshipId)));
+    public Page<FriendshipGetProjection> findAllFriendshipsPaginated(Pageable pageable) {
+        var currentUserId = authUtil.getCurrentUser().getId();
+        return repository.findById_UserId2OrId_UserId1(currentUserId, currentUserId, pageable);
     }
 
-    public Page<Friendship> findAllFriendShipsPaginated(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Optional<Friendship> findById(FriendshipId id) {
+        var idUserId1 = id.getUserId1();
+        var idUserId2 = id.getUserId2();
+
+        return repository.findFriendshipById(idUserId1, idUserId2);
     }
 
-    public void blockFriendship(FriendshipId friendshipId) {
-        rules.assertNotSendingRequestToSelf(friendshipId.getUserId1(), friendshipId.getUserId2());
+    public Friendship findByIdOrElseThrowNotFound(FriendshipId id) {
+        rules.assertNotSendingRequestToSelf(id.getUserId1(), id.getUserId2());
 
-        var friendship = findByIdOrElseThrowNotFound(friendshipId);
-
-        friendship.setBlocked(true);
-
-        repository.save(friendship);
+        return findById(id)
+                .orElseThrow(() -> new NotFoundException("Friendship not %s found".formatted(id)));
     }
 
-    public void unblockFriendship(FriendshipId friendshipId) {
-        rules.assertNotSendingRequestToSelf(friendshipId.getUserId1(), friendshipId.getUserId2());
+    public void removeFriendshipIfExists(FriendshipId id) {
+        rules.assertNotSendingRequestToSelf(id.getUserId1(), id.getUserId2());
 
-        var friendship = findByIdOrElseThrowNotFound(friendshipId);
-
-        friendship.setBlocked(false);
-
-        repository.save(friendship);
-    }
-
-    public void removeFriendship(FriendshipId friendshipId) {
-        rules.assertNotSendingRequestToSelf(friendshipId.getUserId1(), friendshipId.getUserId2());
-
-        var friendship = findByIdOrElseThrowNotFound(friendshipId);
-
-        repository.delete(friendship);
+        findById(id).ifPresent(repository::delete);
     }
 }

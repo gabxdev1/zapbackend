@@ -9,6 +9,7 @@ import br.com.gabxdev.response.UserPutResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
@@ -17,6 +18,7 @@ public interface UserMapper {
     User toEntity(RegisterPostRequest request);
 
     @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")
+    @Mapping(target = "id", expression = "java(getIdCurrentUser())")
     User toEntity(UserPutRequest request);
 
     RegisterPostResponse toRegisterPostResponse(User user);
@@ -24,4 +26,10 @@ public interface UserMapper {
     UserGetResponse toUserGetResponse(User user);
 
     UserPutResponse toUserPutResponse(User user);
+
+    default Long getIdCurrentUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var currentUser = (User) auth.getPrincipal();
+        return currentUser.getId();
+    }
 }
