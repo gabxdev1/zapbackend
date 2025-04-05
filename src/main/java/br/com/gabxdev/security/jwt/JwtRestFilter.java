@@ -2,7 +2,7 @@ package br.com.gabxdev.security.jwt;
 
 import br.com.gabxdev.exception.ApiError;
 import br.com.gabxdev.exception.NotFoundException;
-import br.com.gabxdev.repository.UserRepository;
+import br.com.gabxdev.security.services.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -11,12 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,10 +25,12 @@ import static br.com.gabxdev.commons.Constants.WHITE_LIST;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtRestFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
 
     private final JwtUtil jwtUtil;
-    private final UserRepository repository;
+
     private final ObjectMapper mapper;
 
     @Override
@@ -39,13 +38,12 @@ public class JwtFilter extends OncePerRequestFilter {
         log.debug("Received request to check if token is valid");
 
         try {
-            var tokenJwt = retrieveToken(request);
-            var userId = jwtUtil.extractUserId(tokenJwt);
-            var user = repository.findById(userId)
-                    .orElseThrow(() -> new NotFoundException("User %d not found".formatted(userId)));
+            var tokenFromRequest = jwtService.getTokenFromRequest(request);
 
-            var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            var userId = jwtUtil.extractUserIdAndValidate(tokenFromRequest);
+
+            var auth = jwtService.getAuthentication(userId, request);
+
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             log.debug("Successfully authenticated user");
@@ -66,14 +64,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
             throwError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), response, request);
         }
-    }
-
-    private String retrieveToken(HttpServletRequest request) {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!(header != null && header.startsWith("Bearer ") && !header.substring(7).isEmpty())) {
-            throw new JwtException("Invalid token.");
-        }
-        return header.substring(7);
     }
 
     @Override
