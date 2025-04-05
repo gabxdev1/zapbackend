@@ -16,7 +16,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class GlobalErrorHandlerAdvice {
+public class GlobalErrorHandlerAdvice { //akarta.validation.UnexpectedTypeException:
 
     private ResponseEntity<ApiError> prepareResponse(final HttpStatus status, final HttpServletRequest request, final String message) {
         var path = request.getRequestURI();

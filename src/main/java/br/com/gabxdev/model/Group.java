@@ -16,6 +16,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "Group.fullDetails",
+                includeAllAttributes = true,
+                attributeNodes = {@NamedAttributeNode(value = "members", subgraph = "membersWithUser")},
+                subgraphs = {@NamedSubgraph(
+                        name = "membersWithUser",
+                        attributeNodes = {@NamedAttributeNode("user")}
+                )}
+        )})
 public class Group extends Auditable {
 
     @Id

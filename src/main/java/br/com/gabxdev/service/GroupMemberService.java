@@ -68,19 +68,23 @@ public class GroupMemberService {
 
         validateMemberRemoval(groupId, userToRemoveId);
 
-        var groupMemberId = getGroupMemberId(groupId, userToRemoveId);
+        var groupMemberId = groupMembershipRules.createGroupMemberId(groupId, userToRemoveId);
 
-        groupMemberRepository.removeGroupMemberById(groupMemberId);
+        groupMemberRepository.deleteById(groupMemberId);
     }
 
-    public void promoteToAdmin(Long groupId, Long userToPromoteId) {
+    public void promoteToModerator(Long groupId, Long userToPromoteId) {
+        var currentUserId = auth.getCurrentUser().getId();
+
         var group = groupService.findByIdOrThrowNotFound(groupId);
 
-        var userToPromote = userService.findByIdOrThrowNotFound(userToPromoteId);
+        userService.findByIdOrThrowNotFound(userToPromoteId);
+
+        userRelationshipRules.assertUserIsNotSelf(currentUserId, userToPromoteId);
 
         groupMembershipRules.assertCurrentUserIsGroupModerator(group);
 
-        var groupMemberId = getGroupMemberId(groupId, userToPromote.getId());
+        var groupMemberId = groupMembershipRules.createGroupMemberId(groupId, userToPromoteId);
 
         var groupMember = findByIdOrThrowNotFound(groupMemberId);
 
@@ -89,43 +93,48 @@ public class GroupMemberService {
         groupMemberRepository.save(groupMember);
     }
 
+    public void demoteFromModerator(Long groupId, Long userToDemoteId) {
+        var currentUserId = auth.getCurrentUser().getId();
+
+        var group = groupService.findByIdOrThrowNotFound(groupId);
+
+        userService.findByIdOrThrowNotFound(userToDemoteId);
+
+        userRelationshipRules.assertUserIsNotSelf(currentUserId, userToDemoteId);
+
+        assertUserIsNotGroupCreator(groupId, userToDemoteId);
+
+        groupMembershipRules.assertCurrentUserIsGroupModerator(group);
+
+        var groupMemberId = groupMembershipRules.createGroupMemberId(groupId, userToDemoteId);
+        var groupMember = findByIdOrThrowNotFound(groupMemberId);
+
+        groupMember.setModerator(false);
+
+        groupMemberRepository.save(groupMember);
+    }
+
     private void validateMemberRemoval(Long groupId, Long userToRemoveId) {
         userService.findByIdOrThrowNotFound(userToRemoveId);
 
-        assertUserIsMemberOfGroup(groupId, userToRemoveId);
+        groupMembershipRules.assertUserIsMemberOfGroupThrowNotFound(groupId, userToRemoveId);
 
         assertUserIsNotGroupCreator(groupId, userToRemoveId);
     }
 
-    private void assertUserIsMemberOfGroup(Long groupId, Long userId) {
-        var groupMemberId = getGroupMemberId(groupId, userId);
-
-        if (!isMemberOfGroup(groupMemberId)) {
-            throw new NotFoundException("User is not a member of this group.");
-        }
-    }
-
     private void assertUserNotMemberOfGroup(Long groupId, Long userId) {
-        var groupMemberId = getGroupMemberId(groupId, userId);
+        var groupMemberId = groupMembershipRules.createGroupMemberId(groupId, userId);
 
-        if (isMemberOfGroup(groupMemberId)) {
+        if (groupMembershipRules.isMemberOfGroup(groupMemberId)) {
             throw new ForbiddenException("User is already a member of the group");
         }
     }
 
     private void assertUserIsNotGroupCreator(Long groupId, Long userId) {
-        var groupMemberId = getGroupMemberId(groupId, userId);
+        var groupMemberId = groupMembershipRules.createGroupMemberId(groupId, userId);
 
         if (groupMemberRepository.existsByIdAndCreatedBy(groupMemberId, userId)) {
-            throw new ForbiddenException("Group creator cannot be removed from the group");
+            throw new ForbiddenException("You do not have permission to perform this action on the group creator");
         }
-    }
-
-    private boolean isMemberOfGroup(GroupMemberId groupMemberId) {
-        return groupMemberRepository.existsById(groupMemberId);
-    }
-
-    private GroupMemberId getGroupMemberId(Long groupId, Long userId) {
-        return GroupMemberId.builder().userId(userId).groupId(groupId).build();
     }
 }

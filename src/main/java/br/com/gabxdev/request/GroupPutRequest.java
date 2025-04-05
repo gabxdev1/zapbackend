@@ -1,10 +1,11 @@
 package br.com.gabxdev.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record GroupPutRequest(
 
-        @NotBlank
+        @NotNull
         Long id,
 
         @NotBlank
