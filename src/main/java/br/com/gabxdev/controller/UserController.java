@@ -1,6 +1,6 @@
 package br.com.gabxdev.controller;
 
-import br.com.gabxdev.commons.anotations.CurrentUser;
+import br.com.gabxdev.anotations.CurrentUser;
 import br.com.gabxdev.mapper.UserMapper;
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.request.UserPutRequest;

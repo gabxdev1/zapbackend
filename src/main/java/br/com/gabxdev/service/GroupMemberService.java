@@ -1,9 +1,11 @@
 package br.com.gabxdev.service;
 
 import br.com.gabxdev.Rules.GroupMembershipRules;
+import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
+import br.com.gabxdev.model.GroupMember;
 import br.com.gabxdev.model.pk.GroupMemberId;
 import br.com.gabxdev.repository.GroupMemberRepository;
 import br.com.gabxdev.repository.GroupRepository;
@@ -22,16 +24,27 @@ public class GroupMemberService {
 
     private final UserService userService;
 
-    private final GroupMembershipRules rules;
+    private final GroupMembershipRules groupMembershipRules;
 
     private final GroupRepository groupRepository;
 
+    private final UserRelationshipRules userRelationshipRules;
+
     private final AuthUtil auth;
 
+    public GroupMember findByIdOrThrowNotFound(GroupMemberId id) {
+        return groupMemberRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Group member %s not found".formatted(id)));
+    }
+
     public void addMembers(Long groupId, Set<Long> userIds) {
+        var currentUserId = auth.getCurrentUser().getId();
+
+        userRelationshipRules.assertUserIsNotSelf(currentUserId, userIds);
+
         var group = groupService.findByIdOrThrowNotFound(groupId);
 
-        rules.assertCurrentUserIsGroupModerator(group);
+        groupMembershipRules.assertCurrentUserIsGroupModerator(group);
 
         userIds.forEach(memberId -> {
             var newMember = userService.findByIdOrThrowNotFound(memberId);
@@ -44,20 +57,44 @@ public class GroupMemberService {
         groupRepository.save(group);
     }
 
-    public void removeMember(Long groupId, Long userId) {
+    public void removeMember(Long groupId, Long userToRemoveId) {
+        var currentUserId = auth.getCurrentUser().getId();
+
+        userRelationshipRules.assertUserIsNotSelf(currentUserId, userToRemoveId);
+
         var group = groupService.findByIdOrThrowNotFound(groupId);
 
-        var userToRemove = userService.findByIdOrThrowNotFound(userId);
+        groupMembershipRules.assertCurrentUserIsGroupModerator(group);
 
-        rules.assertCurrentUserIsGroupModerator(group);
+        validateMemberRemoval(groupId, userToRemoveId);
 
-        assertUserIsMemberOfGroup(groupId, userToRemove.getId());
-
-        assertUserIsNotGroupCreator(groupId, userToRemove.getId());
-
-        var groupMemberId = getGroupMemberId(groupId, userId);
+        var groupMemberId = getGroupMemberId(groupId, userToRemoveId);
 
         groupMemberRepository.removeGroupMemberById(groupMemberId);
+    }
+
+    public void promoteToAdmin(Long groupId, Long userToPromoteId) {
+        var group = groupService.findByIdOrThrowNotFound(groupId);
+
+        var userToPromote = userService.findByIdOrThrowNotFound(userToPromoteId);
+
+        groupMembershipRules.assertCurrentUserIsGroupModerator(group);
+
+        var groupMemberId = getGroupMemberId(groupId, userToPromote.getId());
+
+        var groupMember = findByIdOrThrowNotFound(groupMemberId);
+
+        groupMember.setModerator(true);
+
+        groupMemberRepository.save(groupMember);
+    }
+
+    private void validateMemberRemoval(Long groupId, Long userToRemoveId) {
+        userService.findByIdOrThrowNotFound(userToRemoveId);
+
+        assertUserIsMemberOfGroup(groupId, userToRemoveId);
+
+        assertUserIsNotGroupCreator(groupId, userToRemoveId);
     }
 
     private void assertUserIsMemberOfGroup(Long groupId, Long userId) {
@@ -89,8 +126,6 @@ public class GroupMemberService {
     }
 
     private GroupMemberId getGroupMemberId(Long groupId, Long userId) {
-        var currentUserId = auth.getCurrentUser().getId();
-
-        return GroupMemberId.builder().userId(currentUserId).groupId(groupId).build();
+        return GroupMemberId.builder().userId(userId).groupId(groupId).build();
     }
 }
