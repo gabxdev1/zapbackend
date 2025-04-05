@@ -18,7 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/friends-requests")
+@RequestMapping("/v1/users/friends-requests")
 @Slf4j
 @RequiredArgsConstructor
 public class FriendRequestController {

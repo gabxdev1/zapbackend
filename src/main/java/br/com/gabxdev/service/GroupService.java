@@ -27,12 +27,22 @@ public class GroupService {
 
     private final UserRelationshipRules userRelationshipRules;
 
-    public Optional<Group> findById(Long groupId) {
+    private Optional<Group> findById(Long groupId) {
         return repository.findById(groupId);
     }
 
     public Group findByIdOrThrowNotFound(Long groupId) {
-        return findById(groupId).orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
+        return findById(groupId)
+                .orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
+    }
+
+    public Group getGroupFullDetails(Long groupId) {
+        var currentUserId = auth.getCurrentUser().getId();
+
+        groupMembershipRules.assertUserIsMemberOfGroupThrowForbidden(groupId, currentUserId);
+
+        return repository.findByIdFullDetails(groupId)
+                .orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
     }
 
     public Group createGroup(String name, String description, Set<Long> memberIds) {

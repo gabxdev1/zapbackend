@@ -43,6 +43,4 @@ public class UserController {
 
         return ResponseEntity.ok(mapper.toUserPutResponse(userUpdated));
     }
-
-
 }
