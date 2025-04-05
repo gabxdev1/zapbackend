@@ -37,14 +37,14 @@ public class FriendshipService {
     }
 
     public Friendship findByIdOrElseThrowNotFound(FriendshipId id) {
-        rules.assertNotSendingRequestToSelf(id.getUserId1(), id.getUserId2());
+        rules.assertUserIsNotSelf(id.getUserId1(), id.getUserId2());
 
         return findById(id)
                 .orElseThrow(() -> new NotFoundException("Friendship not %s found".formatted(id)));
     }
 
     public void removeFriendshipIfExists(FriendshipId id) {
-        rules.assertNotSendingRequestToSelf(id.getUserId1(), id.getUserId2());
+        rules.assertUserIsNotSelf(id.getUserId1(), id.getUserId2());
 
         findById(id).ifPresent(repository::delete);
     }

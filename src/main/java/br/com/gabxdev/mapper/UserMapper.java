@@ -6,6 +6,7 @@ import br.com.gabxdev.request.UserPutRequest;
 import br.com.gabxdev.response.RegisterPostResponse;
 import br.com.gabxdev.response.UserGetResponse;
 import br.com.gabxdev.response.UserPutResponse;
+import br.com.gabxdev.response.audit.UserAuditDetailsResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -26,6 +27,8 @@ public interface UserMapper {
     UserGetResponse toUserGetResponse(User user);
 
     UserPutResponse toUserPutResponse(User user);
+
+    UserAuditDetailsResponse toUserAuditDetailsResponse(User user);
 
     default Long getIdCurrentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();

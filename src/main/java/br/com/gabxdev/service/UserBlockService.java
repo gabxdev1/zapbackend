@@ -41,7 +41,7 @@ public class UserBlockService {
         var userBlocker = auth.getCurrentUser();
         var userToBlock = userService.findByIdOrThrowNotFound(idUser);
 
-        rules.assertNotSendingRequestToSelf(userBlocker.getId(), userToBlock.getId());
+        rules.assertUserIsNotSelf(userBlocker.getId(), userToBlock.getId());
 
         var blockId = UserBlockId.builder()
                 .blocker(userBlocker.getId())
@@ -65,7 +65,7 @@ public class UserBlockService {
     public void unblockUser(Long idUser) {
         var userBlocker = auth.getCurrentUser();
 
-        rules.assertNotSendingRequestToSelf(userBlocker.getId(), idUser);
+        rules.assertUserIsNotSelf(userBlocker.getId(), idUser);
 
         var blockId = UserBlockId.builder().blocker(userBlocker.getId()).blocked(idUser).build();
 

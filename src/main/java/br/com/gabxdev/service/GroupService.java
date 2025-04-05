@@ -1,6 +1,7 @@
 package br.com.gabxdev.service;
 
 import br.com.gabxdev.Rules.GroupMembershipRules;
+import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
@@ -22,23 +23,28 @@ public class GroupService {
 
     private final UserService userService;
 
-    private final GroupMembershipRules rules;
+    private final GroupMembershipRules groupMembershipRules;
+
+    private final UserRelationshipRules userRelationshipRules;
 
     public Optional<Group> findById(Long groupId) {
         return repository.findById(groupId);
     }
 
     public Group findByIdOrThrowNotFound(Long groupId) {
-        return findById(groupId)
-                .orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
+        return findById(groupId).orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
     }
 
     public Group createGroup(String name, String description, Set<Long> memberIds) {
-        var currentUser = auth.getCurrentUser();
+        var currentUserId = auth.getCurrentUser().getId();
+
+        userRelationshipRules.assertUserIsNotSelf(currentUserId, memberIds);
 
         var newGroup = Group.builder().name(name).description(description).build();
 
-        newGroup.addMember(currentUser, true);
+        var userModerator = userService.findByIdOrThrowNotFound(currentUserId);
+
+        newGroup.addMember(userModerator, true);
 
         memberIds.forEach(memberId -> {
             var newMember = userService.findByIdOrThrowNotFound(memberId);
@@ -51,7 +57,7 @@ public class GroupService {
     public Group updateGroup(Long groupId, String name, String description) {
         var groupToUpdate = findByIdOrThrowNotFound(groupId);
 
-        rules.assertCurrentUserIsGroupModerator(groupToUpdate);
+        groupMembershipRules.assertCurrentUserIsGroupModerator(groupToUpdate);
 
         groupToUpdate.setName(name);
         groupToUpdate.setDescription(description);

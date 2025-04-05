@@ -6,16 +6,26 @@ import br.com.gabxdev.repository.UserBlockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 @Component
 @RequiredArgsConstructor
 public class UserRelationshipRules {
 
     private final UserBlockRepository userBlockRepository;
 
-    public void assertNotSendingRequestToSelf(Long toId, Long fromId) {
+    public void assertUserIsNotSelf(Long toId, Long fromId) {
         if (toId.equals(fromId)) {
             throw new ForbiddenException("You are not allowed to send request to self");
         }
+    }
+
+    public void assertUserIsNotSelf(Long toId, Collection<Long> usersId) {
+        usersId.forEach(userId -> {
+            if (toId.equals(userId)) {
+                throw new ForbiddenException("You are not allowed to send request to self");
+            }
+        });
     }
 
     public boolean friendIsBlocked(FriendshipId friendshipId) {

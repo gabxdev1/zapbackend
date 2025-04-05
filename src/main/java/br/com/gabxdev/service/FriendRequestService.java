@@ -52,7 +52,7 @@ public class FriendRequestService {
     }
 
     public void sendFriendRequest(FriendRequestId friendRequestId) {
-        rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
+        rules.assertUserIsNotSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
         var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
@@ -77,7 +77,7 @@ public class FriendRequestService {
 
     @Transactional
     public void acceptFriendRequest(FriendRequestId friendRequestId) {
-        rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
+        rules.assertUserIsNotSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         var userSender = userService.findByIdOrThrowNotFound(friendRequestId.getSenderId());
         var userReceiver = userService.findByIdOrThrowNotFound(friendRequestId.getReceiverId());
@@ -104,7 +104,7 @@ public class FriendRequestService {
     }
 
     public void rejectFriendRequest(FriendRequestId friendRequestId) {
-        rules.assertNotSendingRequestToSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
+        rules.assertUserIsNotSelf(friendRequestId.getSenderId(), friendRequestId.getReceiverId());
 
         assertThatExistFriendRequestAndStatusIsPending(friendRequestId);
 

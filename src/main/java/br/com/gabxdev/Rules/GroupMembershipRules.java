@@ -23,7 +23,7 @@ public class GroupMembershipRules {
 
         var groupMemberId = GroupMemberId.builder().userId(currentUserId.getId()).groupId(group.getId()).build();
 
-        if (groupMemberRepository.existsByIdAndIsModerator(groupMemberId, true)) {
+        if (groupMemberRepository.existsByIdAndModerator(groupMemberId, true)) {
             throw new ForbiddenException("Only group admin can perform this action");
         }
     }

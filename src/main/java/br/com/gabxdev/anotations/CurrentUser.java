@@ -1,4 +1,4 @@
-package br.com.gabxdev.commons.anotations;
+package br.com.gabxdev.anotations;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
