@@ -16,16 +16,31 @@ services:
     networks:
       - zapbackend-network
 
-  pgadmin4:
-    image: dpage/pgadmin4:9.0.0
-    container_name: zapbackend-pgadmin4
-    environment:
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-    ports:
-      - "15432:80"
+#  pgadmin4:
+#    image: dpage/pgadmin4:9.0.0
+#    container_name: zapbackend-pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_PASSWORD: admin
+#      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+#    ports:
+#      - "15432:80"
+#    networks:
+#      - zapbackend-network
+
+  rabbitmq1:
+    image: rabbitmq:4.0.7-management-alpine
+    container_name: rabbitmq1
+    restart: always
+    hostname: rabbitmq1
     networks:
-      - zapbackend-network
+      - "zapbackend-network"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
 volumes:
   zapbackend-db:

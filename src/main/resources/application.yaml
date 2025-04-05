@@ -23,6 +23,11 @@ spring:
     enabled: off
   jackson:
     time-zone: UTC
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 zap-backend:
   jwt:
     expiration-seconds: 3600

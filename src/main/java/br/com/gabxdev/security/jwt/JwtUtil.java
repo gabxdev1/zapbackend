@@ -40,7 +40,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Long extractUserId(String token) {
+    public Long extractUserIdAndValidate(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey())
                 .requireAudience("zapbackend-web-app")
