@@ -1,5 +1,6 @@
 package br.com.gabxdev.model;
 
+import br.com.gabxdev.Audit.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
-public class PrivateMessage {
+public class PrivateMessage extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

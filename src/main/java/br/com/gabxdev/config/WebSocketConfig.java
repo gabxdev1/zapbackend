@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableStompBrokerRelay("/topic", "/queue/", "/user", "/users/")
+        registry.enableStompBrokerRelay("/topic", "/queue/")
                 .setRelayHost("localhost")
                 .setRelayPort(61613)
                 .setSystemLogin("guest")
@@ -33,9 +33,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*")
                 .addInterceptors(jwtHandshakeInterceptor)
-                .withSockJS();
+                .setAllowedOriginPatterns("*");
     }
 
     @Override
