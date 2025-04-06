@@ -1,5 +1,6 @@
 package br.com.gabxdev.model;
 
+import br.com.gabxdev.Audit.Auditable;
 import br.com.gabxdev.model.pk.GroupMessageReadId;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +14,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupMessageRead {
+public class GroupMessageRead extends Auditable {
 
     @EmbeddedId
     private GroupMessageReadId id;
@@ -27,7 +28,4 @@ public class GroupMessageRead {
     @MapsId(value = "userId")
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
-
-
-    private Instant readAt;
 }

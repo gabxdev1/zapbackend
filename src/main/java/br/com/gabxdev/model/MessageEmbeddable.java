@@ -5,17 +5,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.time.Instant;
 
 @Embeddable
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class MessageEmbeddable {
 
     @Column(nullable = false, length = 999)
     private String content;
-
-    @Column(nullable = false, updatable = false)
-    private Instant sentAt;
 
     private Instant readAt;
 

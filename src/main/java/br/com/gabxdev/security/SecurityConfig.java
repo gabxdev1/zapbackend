@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, WHITE_LIST.toArray(String[]::new)).permitAll()
+                        .requestMatchers(WHITE_LIST.toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

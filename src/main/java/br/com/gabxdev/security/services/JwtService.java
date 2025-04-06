@@ -9,8 +9,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
 
 import static br.com.gabxdev.commons.Constants.BEARER_PREFIX;
 
@@ -49,14 +52,15 @@ public class JwtService {
         return getTokenFromHeaderAuthorization(authHeader);
     }
 
-    public String getTokenFromRequest(ServerHttpRequest request) {
-        var authHeaders = request.getHeaders().get(HttpHeaders.AUTHORIZATION);
+    public String getTokenFromRequest(URI uri) {
 
-        if (!(authHeaders != null && !authHeaders.isEmpty())) {
-            throw new JwtException("Invalid JWT token");
+        String query = uri.getQuery();
+
+        if (query != null && query.startsWith("token=")) {
+            return query.substring("token=".length());
+        } else {
+            throw new JwtException("Missing JWT token in query parameter");
         }
-
-        return getTokenFromHeaderAuthorization(authHeaders.getFirst());
     }
 
     private String getTokenFromHeaderAuthorization(String header) {

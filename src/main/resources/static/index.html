@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Auth Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+</head>
+<body>
+<h1>WebSocket Auth Test</h1>
+<script>
+    const token = 'eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJmMzQ3NmM4Yy05MWI3LTRkMDQtYjMxMS02MzZkZmUyOWQ3ZTEiLCJpc3MiOiJici5jb20uZ2FieGRldiIsInJvbGUiOiJST0xFX1VTRVIiLCJ1aWQiOjEsImF1ZCI6WyJ6YXBiYWNrZW5kLXdlYi1hcHAiXSwianRpIjoiMThkOWNkNjQtMjNiYS00MDQ2LThlZGUtOTY4OTA0NjI1MDU5IiwiaWF0IjoxNzQzODkzMzUwLCJleHAiOjE3NDM4OTY5NTB9.Eprdab0sfLLY3irJD5AlMZHG8z2vAXUEkcx2HH1LcC5V7A7mxlD41Ur8XwqKFUgo'; // teu token real aqui
+
+    const stompClient = new StompJs.Client({
+        brokerURL: `ws://localhost:8080/zapbackend-ws?token=${token}`,
+        debug: function (str) {
+            console.log(str);
+        },
+        onConnect: function (frame) {
+            console.log('Conectado com sucesso!', frame);
+        },
+        onStompError: function (frame) {
+            console.error('Erro STOMP:', frame);
+        }
+    });
+
+    stompClient.activate();
+</script>
+</body>
+</html>

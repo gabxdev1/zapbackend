@@ -30,7 +30,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
 
         try {
-            var tokenFromRequest = jwtService.getTokenFromRequest(request);
+            var tokenFromRequest = jwtService.getTokenFromRequest(request.getURI());
 
             var userId = jwtUtil.extractUserIdAndValidate(tokenFromRequest);
 
