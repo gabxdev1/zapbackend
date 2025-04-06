@@ -26,6 +26,7 @@ public class FriendshipService {
 
     public Page<FriendshipGetResponse> findAllFriendshipsPaginated(Pageable pageable) {
         var currentUserId = authUtil.getCurrentUser().getId();
+
         return repository.findAllFriendshipByUserIdPaginated(currentUserId, pageable);
     }
 

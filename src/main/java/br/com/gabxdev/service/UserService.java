@@ -1,10 +1,14 @@
 package br.com.gabxdev.service;
 
+import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.EmailAlreadyExistsException;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.User;
+import br.com.gabxdev.model.enums.UserStatus;
 import br.com.gabxdev.repository.UserRepository;
+import br.com.gabxdev.response.user.UserStatusNotifyResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +23,18 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthUtil authUtil;
+
+    private final SimpMessagingTemplate messagingTemplate;
+
     public User findByIdOrThrowNotFound(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User %d not found".formatted(id)));
+    }
+
+    public User findByEmail(String email) {
+        return repository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new NotFoundException("User %d not found".formatted(email)));
     }
 
     public User update(User updateUser) {
@@ -54,6 +67,46 @@ public class UserService {
     }
 
     public List<User> findByEmailLikeLimit20(String email) {
-        return repository.findFirst20ByEmailIgnoreCaseLike(email);
+        var currentUserId = authUtil.getCurrentUser().getId();
+
+        return repository.findFirst20ByEmailIgnoreCaseContainsAndIdNot(email, currentUserId);
+    }
+
+    public void notifyUserLogin(Long userId) {
+        var userStatusNotifyResponse = prepareUserStatusNotifyResponse(userId, UserStatus.ONLINE);
+
+        var destination = "/topic/user/%d/status".formatted(userId);
+
+        messagingTemplate.convertAndSend(destination, userStatusNotifyResponse);
+    }
+
+    public void notifyUserLogout(Long userId) {
+        var userStatusNotifyResponse = prepareUserStatusNotifyResponse(userId, UserStatus.OFFLINE);
+
+        var destination = "/topic/user/%d/status".formatted(userId);
+
+        messagingTemplate.convertAndSend(destination, userStatusNotifyResponse);
+    }
+
+    public void updateUserStatus(Long userId, UserStatus newStatus) {
+        var userStatusNotifyResponse = prepareUserStatusNotifyResponse(userId, newStatus);
+
+        var destination = "/topic/user/%d/status".formatted(userId);
+
+        messagingTemplate.convertAndSend(destination, userStatusNotifyResponse);
+    }
+
+    private UserStatusNotifyResponse prepareUserStatusNotifyResponse(Long userId, UserStatus newStatus) {
+        var user = findByIdOrThrowNotFound(userId);
+
+        user.setLastSeen(Instant.now());
+        user.setStatus(UserStatus.OFFLINE);
+        repository.save(user);
+
+        return UserStatusNotifyResponse.builder()
+                .userId(user.getId())
+                .status(newStatus)
+                .lastSeen(user.getLastSeen())
+                .build();
     }
 }

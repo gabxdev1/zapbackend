@@ -14,5 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
-    List<User> findFirst20ByEmailIgnoreCaseLike(@Param("email") String email);
+    List<User> findFirst20ByEmailIgnoreCaseContains(@Param("email") String email);
+
+    List<User> findFirst20ByEmailIgnoreCaseContainsAndIdNot(String email, Long id);
 }

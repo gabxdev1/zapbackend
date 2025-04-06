@@ -18,7 +18,7 @@ import java.time.Instant;
 @Setter
 public class MessageEmbeddable {
 
-    @Column(nullable = false, length = 999)
+    @Column(nullable = false, length = 2000)
     private String content;
 
     private Instant readAt;

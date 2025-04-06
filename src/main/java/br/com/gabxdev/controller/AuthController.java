@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserMapper userMapper;
+
     private final HeaderUtils headerUtils;
+
     private final AuthService authService;
 
     @PostMapping("/register")

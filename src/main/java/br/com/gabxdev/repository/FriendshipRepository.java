@@ -41,7 +41,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Friendsh
             FROM Friendship f
             WHERE (f.user1.id = :currentUserId OR f.user2.id = :currentUserId)
             """)
-    Page<FriendshipGetResponse> findAllFriendshipByUserIdPaginated(Long currentUuserId, Pageable pageable);
+    Page<FriendshipGetResponse> findAllFriendshipByUserIdPaginated(Long currentUserId, Pageable pageable);
 
     @Query("""
             SELECT f FROM Friendship f
