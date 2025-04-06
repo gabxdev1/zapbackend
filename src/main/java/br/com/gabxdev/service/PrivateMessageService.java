@@ -1,17 +1,16 @@
 package br.com.gabxdev.service;
 
+import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.MessageEmbeddable;
 import br.com.gabxdev.model.PrivateMessage;
 import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.repository.PrivateMessageRepository;
-import br.com.gabxdev.repository.UserRepository;
-import br.com.gabxdev.request.message.PrivateMessageSendRequest;
+import br.com.gabxdev.request.privateMessage.PrivateMessageSendRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -19,17 +18,22 @@ public class PrivateMessageService {
 
     private final PrivateMessageRepository repository;
 
-    private final SimpMessagingTemplate messagingTemplate;
+    private final UserService userService;
 
-    private final UserRepository userRepository;
+    private final AuthUtil authUtil;
 
-    public void sendPrivateMessage(PrivateMessageSendRequest request, Principal principal) {
+    private PrivateMessage findByIdOrThrowNotFound(Long messageId) {
+        return repository.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Private message %d not found".formatted(messageId)));
+    }
 
-        var sender = userRepository.findByEmailIgnoreCase(principal.getName())
-                .orElseThrow(() -> new NotFoundException("Sender %s not found".formatted(principal.getName())));
+    public PrivateMessage savePrivateMessage(PrivateMessageSendRequest request) {
+        var senderId = authUtil.getCurrentUser().getId();
+        var recipientId = request.recipientId();
 
-        var recipient = userRepository.findById(request.recipientId())
-                .orElseThrow(() -> new NotFoundException("Recipient %d not found".formatted(request.recipientId())));
+        var sender = userService.findByIdOrThrowNotFound(senderId);
+
+        var recipient = userService.findByIdOrThrowNotFound(recipientId);
 
         var message = MessageEmbeddable.builder()
                 .content(request.content())
@@ -42,12 +46,24 @@ public class PrivateMessageService {
                 .message(message)
                 .build();
 
-        var messageSaved = repository.save(privateMessage);
+        return repository.save(privateMessage);
+    }
 
-        messagingTemplate.convertAndSendToUser(
-                recipient.getEmail(),
-                "/queue/messages",
-                messageSaved
-        );
+    public PrivateMessage updatePrivateMessageStatusAndReadAt(Long privateMessageId, MessageStatus status) {
+        var message = findByIdOrThrowNotFound(privateMessageId);
+
+        message.getMessage().setStatus(status);
+        message.getMessage().setReadAt(Instant.now());
+
+        return repository.save(message);
+    }
+
+    public PrivateMessage updatePrivateMessageStatusAndReceivedAt(Long privateMessageId, MessageStatus status) {
+        var message = findByIdOrThrowNotFound(privateMessageId);
+
+        message.getMessage().setStatus(status);
+        message.getMessage().setReceivedAt(Instant.now());
+
+        return repository.save(message);
     }
 }

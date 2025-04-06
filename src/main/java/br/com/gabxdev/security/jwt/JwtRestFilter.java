@@ -70,7 +70,7 @@ public class JwtRestFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         var requestURI = request.getRequestURI();
 
-        return WHITE_LIST.contains(requestURI);
+        return WHITE_LIST.contains(requestURI) || requestURI.startsWith("/zapbackend-ws");
     }
 
     private void throwError(HttpStatus status, String message, HttpServletResponse response, HttpServletRequest request) throws IOException {

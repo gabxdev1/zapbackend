@@ -4,8 +4,8 @@ import br.com.gabxdev.anotations.CurrentUser;
 import br.com.gabxdev.mapper.UserMapper;
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.request.UserPutRequest;
-import br.com.gabxdev.response.UserGetResponse;
-import br.com.gabxdev.response.UserPutResponse;
+import br.com.gabxdev.response.user.UserGetResponse;
+import br.com.gabxdev.response.user.UserPutResponse;
 import br.com.gabxdev.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,19 +13,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class UserController {
 
     private final UserService service;
 
     private final UserMapper mapper;
 
-    @GetMapping(headers = {HttpHeaders.AUTHORIZATION})
+    @GetMapping(path = "/search", headers = {HttpHeaders.AUTHORIZATION})
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<List<UserGetResponse>> findUserByEmail(@RequestParam String email) {
+
+        var user = service.findByEmailLikeLimit20(email);
+
+        return ResponseEntity.ok(mapper.toUserGetResponseList(user));
+    }
+
+
+    @GetMapping(path = "/me", headers = {HttpHeaders.AUTHORIZATION})
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserGetResponse> findUserById(@CurrentUser User currentUser) {
 
@@ -34,7 +48,7 @@ public class UserController {
         return ResponseEntity.ok(mapper.toUserGetResponse(user));
     }
 
-    @PutMapping(headers = {HttpHeaders.AUTHORIZATION})
+    @PutMapping(path = "/me", headers = {HttpHeaders.AUTHORIZATION})
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserPutResponse> updatedUser(@Valid @RequestBody UserPutRequest request) {
         log.debug("Update user: {}", request);

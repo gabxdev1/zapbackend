@@ -1,4 +1,4 @@
-package br.com.gabxdev.response;
+package br.com.gabxdev.response.user;
 
 public record UserGetResponse(
         Long id,

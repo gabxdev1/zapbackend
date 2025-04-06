@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Privado</title>
+</head>
+<body>
+<h1>Chat Privado</h1>
+
+<label>ID do destinatário:</label>
+<input type="number" id="recipientId"><br><br>
+
+<label>Mensagem:</label>
+<input type="text" id="message"><br><br>
+
+<button id="sendBtn">Enviar</button>
+
+<h2>Mensagens Recebidas:</h2>
+<div id="messages"></div>
+
+<!-- ✅ STOMP puro via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
+
+<script>
+    const jwtToken = 'eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI3ZGIyZDc2My02MjMzLTQwODUtOGE5MS1iNzM0ZmE1YjJkMGUiLCJpc3MiOiJici5jb20uZ2FieGRldiIsInJvbGUiOiJST0xFX1VTRVIiLCJ1aWQiOjIsImF1ZCI6WyJ6YXBiYWNrZW5kLXdlYi1hcHAiXSwianRpIjoiZmIzOGEwYmYtZjdmMi00MmE0LTgzNGUtYzU3ZGU4MjNmZDUwIiwiaWF0IjoxNzQzOTY5MTE1LCJleHAiOjE3NDM5NzI3MTV9.L2fFvmFylf6lBtE5-xp0zmn47N-qpzD2rk6Wrajj9reV-1W7H9heYvceJYjw1osL';
+
+    const client = new StompJs.Client({
+        brokerURL: 'ws://localhost:8080/zapbackend-ws?token=' + jwtToken,
+        reconnectDelay: 5000,
+        debug: (str) => console.log('[STOMP]', str)
+    });
+
+    client.onConnect = function (frame) {
+        console.log('✅ Conectado:', frame);
+
+        client.subscribe('/user/queue/messages', function (message) {
+            const body = JSON.parse(message.body);
+            console.log('[Mensagem recebida do back-end]', body);
+
+            const messagesDiv = document.getElementById('messages');
+
+            const content = body.content || 'Mensagem não disponível';
+            const status = body.status || 'Status não disponível';
+            const sentAt = body.audit?.createdAt || 'Data não disponível';
+            const senderName = body.audit?.createdBy
+                ? `${body.audit.createdBy.firstName} ${body.audit.createdBy.lastName}`
+                : 'Usuário desconhecido';
+
+            const html = `
+                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                    <p><strong>De:</strong> ${senderName}</p>
+                    <p><strong>Mensagem:</strong> ${content}</p>
+                    <p><strong>Status:</strong> ${status}</p>
+                    <p><strong>Enviada em:</strong> ${sentAt}</p>
+                </div>
+            `;
+
+            messagesDiv.innerHTML += html;
+        });
+    };
+
+    client.onStompError = function (frame) {
+        console.error('❌ STOMP erro:', frame);
+    };
+
+    client.activate();
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+        const recipientId = parseInt(document.getElementById('recipientId').value);
+        const content = document.getElementById('message').value;
+
+        const payload = {
+            recipientId,
+            content
+        };
+
+        client.publish({
+            destination: '/app/private-message',
+            body: JSON.stringify(payload)
+        });
+
+        document.getElementById('message').value = '';
+    });
+</script>
+</body>
+</html>

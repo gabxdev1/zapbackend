@@ -1,4 +1,4 @@
-package br.com.gabxdev.request.message;
+package br.com.gabxdev.request.privateMessage;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
