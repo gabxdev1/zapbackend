@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.service.private_message;
 
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
@@ -7,6 +7,7 @@ import br.com.gabxdev.model.MessageEmbeddable;
 import br.com.gabxdev.model.PrivateMessage;
 import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.repository.PrivateMessageRepository;
+import br.com.gabxdev.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

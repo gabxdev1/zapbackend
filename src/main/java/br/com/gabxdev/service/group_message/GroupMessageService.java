@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.service.group_message;
 
 import br.com.gabxdev.repository.GroupMessageRepository;
 import lombok.RequiredArgsConstructor;

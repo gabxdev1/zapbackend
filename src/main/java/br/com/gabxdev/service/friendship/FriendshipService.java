@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.service.friendship;
 
 import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;

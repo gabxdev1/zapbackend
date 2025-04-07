@@ -6,7 +6,7 @@ import br.com.gabxdev.dto.response.user.UserGetResponse;
 import br.com.gabxdev.dto.response.user.UserPutResponse;
 import br.com.gabxdev.mapper.UserMapper;
 import br.com.gabxdev.model.User;
-import br.com.gabxdev.service.UserService;
+import br.com.gabxdev.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

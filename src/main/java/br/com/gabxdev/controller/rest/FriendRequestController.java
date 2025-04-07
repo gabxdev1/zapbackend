@@ -6,7 +6,7 @@ import br.com.gabxdev.dto.request.friend_request.FriendRequestPutRequest;
 import br.com.gabxdev.dto.response.projection.ReceivedPendingFriendRequestProjection;
 import br.com.gabxdev.dto.response.projection.SentPendingFriendRequestProjection;
 import br.com.gabxdev.mapper.FriendRequestMapper;
-import br.com.gabxdev.service.FriendRequestService;
+import br.com.gabxdev.service.friend_request.FriendRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

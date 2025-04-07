@@ -6,6 +6,7 @@ import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotifica
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
 import br.com.gabxdev.model.User;
+import br.com.gabxdev.notification.dto.UserPresenceStatusEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,13 @@ public class MessagingWrapperUtil {
     }
 
     public MessageWrapper<PrivateMessageReceivedNotificationRequest> preparePrivateMessageWrapper(PrivateMessageReceivedNotificationRequest request, Principal principal) {
+        var currentUser = extractUserAndSetAuthenticationContext(principal);
+        var roles = extractRoles(currentUser.getAuthorities());
+
+        return new MessageWrapper<>(request, currentUser.getId(), currentUser.getEmail(), roles);
+    }
+
+    public MessageWrapper<UserPresenceStatusEvent> preparePrivateMessageWrapper(UserPresenceStatusEvent request, Principal principal) {
         var currentUser = extractUserAndSetAuthenticationContext(principal);
         var roles = extractRoles(currentUser.getAuthorities());
 

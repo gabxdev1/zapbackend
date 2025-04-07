@@ -2,7 +2,7 @@ package br.com.gabxdev.controller.rest;
 
 import br.com.gabxdev.dto.request.user.UserBlockDeleteRequest;
 import br.com.gabxdev.dto.request.user.UserBlockPostRequest;
-import br.com.gabxdev.service.UserBlockService;
+import br.com.gabxdev.service.user.UserBlockService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;

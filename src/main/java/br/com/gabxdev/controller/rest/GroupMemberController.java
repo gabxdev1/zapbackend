@@ -4,7 +4,7 @@ import br.com.gabxdev.dto.response.groupMember.GroupMemberDeleteRequest;
 import br.com.gabxdev.dto.response.groupMember.GroupMemberDemotePostRequest;
 import br.com.gabxdev.dto.response.groupMember.GroupMemberPostRequest;
 import br.com.gabxdev.dto.response.groupMember.GroupMemberPromotePostRequest;
-import br.com.gabxdev.service.GroupMemberService;
+import br.com.gabxdev.service.group.GroupMemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

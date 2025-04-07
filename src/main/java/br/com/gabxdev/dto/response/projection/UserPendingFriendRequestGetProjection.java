@@ -12,7 +12,5 @@ public interface UserPendingFriendRequestGetProjection {
 
     String getEmail();
 
-    Instant getLastSeen();
-
     Instant getCreatedAt();
 }
