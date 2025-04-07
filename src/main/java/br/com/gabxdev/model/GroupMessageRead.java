@@ -5,8 +5,6 @@ import br.com.gabxdev.model.pk.GroupMessageReadId;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-
 @Entity
 @Getter
 @Setter

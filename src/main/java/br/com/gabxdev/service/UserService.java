@@ -1,12 +1,11 @@
 package br.com.gabxdev.service;
 
-import br.com.gabxdev.commons.AuthUtil;
+import br.com.gabxdev.dto.response.user.UserStatusNotifyResponse;
 import br.com.gabxdev.exception.EmailAlreadyExistsException;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.model.enums.UserStatus;
 import br.com.gabxdev.repository.UserRepository;
-import br.com.gabxdev.response.user.UserStatusNotifyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,8 +21,6 @@ public class UserService {
     private final UserRepository repository;
 
     private final PasswordEncoder passwordEncoder;
-
-    private final AuthUtil authUtil;
 
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -66,8 +63,8 @@ public class UserService {
             throw new EmailAlreadyExistsException("E-mail %s already exists".formatted(email));
     }
 
-    public List<User> findByEmailLikeLimit20(String email) {
-        var currentUserId = authUtil.getCurrentUser().getId();
+    public List<User> findByEmailLikeLimit20(String email, User currentUser) {
+        var currentUserId = currentUser.getId();
 
         return repository.findFirst20ByEmailIgnoreCaseContainsAndIdNot(email, currentUserId);
     }

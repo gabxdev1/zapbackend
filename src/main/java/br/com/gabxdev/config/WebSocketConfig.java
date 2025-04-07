@@ -1,7 +1,7 @@
 package br.com.gabxdev.config;
 
-import br.com.gabxdev.security.webscocket.JwtHandshakeInterceptor;
-import br.com.gabxdev.security.webscocket.WebSocketAuthChannelInterceptor;
+import br.com.gabxdev.websocket.interceptor.JwtHandshakeInterceptor;
+import br.com.gabxdev.websocket.interceptor.WebSocketAuthChannelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;

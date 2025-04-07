@@ -1,8 +1,8 @@
 package br.com.gabxdev.security.jwt;
 
+import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ApiError;
 import br.com.gabxdev.exception.NotFoundException;
-import br.com.gabxdev.security.services.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -27,22 +27,22 @@ import static br.com.gabxdev.commons.Constants.WHITE_LIST;
 @Slf4j
 public class JwtRestFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-
     private final JwtUtil jwtUtil;
 
     private final ObjectMapper mapper;
+
+    private final AuthUtil authUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         log.debug("Received request to check if token is valid");
 
         try {
-            var tokenFromRequest = jwtService.getTokenFromRequest(request);
+            var tokenFromRequest = jwtUtil.getTokenFromRequest(request);
 
             var userId = jwtUtil.extractUserIdAndValidate(tokenFromRequest);
 
-            var auth = jwtService.getAuthentication(userId, request);
+            var auth = authUtil.getAuthentication(userId, request);
 
             SecurityContextHolder.getContext().setAuthentication(auth);
 

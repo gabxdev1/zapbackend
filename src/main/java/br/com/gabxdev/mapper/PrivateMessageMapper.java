@@ -1,8 +1,8 @@
 package br.com.gabxdev.mapper;
 
+import br.com.gabxdev.dto.response.privateMessage.PrivateMessageReadResponse;
+import br.com.gabxdev.dto.response.privateMessage.PrivateMessageSendResponse;
 import br.com.gabxdev.model.PrivateMessage;
-import br.com.gabxdev.response.privateMessage.PrivateMessageReadResponse;
-import br.com.gabxdev.response.privateMessage.PrivateMessageSendResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
