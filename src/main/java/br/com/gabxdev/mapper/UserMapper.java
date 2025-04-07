@@ -1,12 +1,12 @@
 package br.com.gabxdev.mapper;
 
+import br.com.gabxdev.dto.request.RegisterPostRequest;
+import br.com.gabxdev.dto.request.UserPutRequest;
+import br.com.gabxdev.dto.response.RegisterPostResponse;
+import br.com.gabxdev.dto.response.audit.UserAuditDetailsResponse;
+import br.com.gabxdev.dto.response.user.UserGetResponse;
+import br.com.gabxdev.dto.response.user.UserPutResponse;
 import br.com.gabxdev.model.User;
-import br.com.gabxdev.request.RegisterPostRequest;
-import br.com.gabxdev.request.UserPutRequest;
-import br.com.gabxdev.response.RegisterPostResponse;
-import br.com.gabxdev.response.user.UserGetResponse;
-import br.com.gabxdev.response.user.UserPutResponse;
-import br.com.gabxdev.response.audit.UserAuditDetailsResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

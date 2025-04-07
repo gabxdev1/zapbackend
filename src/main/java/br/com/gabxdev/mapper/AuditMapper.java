@@ -1,9 +1,9 @@
 package br.com.gabxdev.mapper;
 
 import br.com.gabxdev.Audit.Auditable;
+import br.com.gabxdev.dto.response.audit.AuditFullDetailsResponse;
+import br.com.gabxdev.dto.response.audit.UserAuditDetailsResponse;
 import br.com.gabxdev.repository.UserRepository;
-import br.com.gabxdev.response.audit.AuditFullDetailsResponse;
-import br.com.gabxdev.response.audit.UserAuditDetailsResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.springframework.beans.factory.annotation.Autowired;

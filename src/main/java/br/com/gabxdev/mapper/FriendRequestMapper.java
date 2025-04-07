@@ -1,10 +1,10 @@
 package br.com.gabxdev.mapper;
 
+import br.com.gabxdev.dto.request.FriendRequestDeleteRequest;
+import br.com.gabxdev.dto.request.FriendRequestPostRequest;
+import br.com.gabxdev.dto.request.FriendRequestPutRequest;
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.model.pk.FriendRequestId;
-import br.com.gabxdev.request.FriendRequestDeleteRequest;
-import br.com.gabxdev.request.FriendRequestPostRequest;
-import br.com.gabxdev.request.FriendRequestPutRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

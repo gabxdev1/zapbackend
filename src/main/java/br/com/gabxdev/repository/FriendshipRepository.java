@@ -1,8 +1,8 @@
 package br.com.gabxdev.repository;
 
+import br.com.gabxdev.dto.response.FriendshipGetResponse;
 import br.com.gabxdev.model.Friendship;
 import br.com.gabxdev.model.pk.FriendshipId;
-import br.com.gabxdev.response.FriendshipGetResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +15,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Friendsh
 
     @Query("""
             SELECT
-                new br.com.gabxdev.response.FriendshipGetResponse(
+                new br.com.gabxdev.dto.response.FriendshipGetResponse(
                     CASE
                         WHEN f.user1.id = :currentUserId THEN f.user2.id
                         ELSE f.user1.id

@@ -2,6 +2,8 @@ package br.com.gabxdev.service;
 
 import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
+import br.com.gabxdev.dto.response.projection.ReceivedPendingFriendRequestProjection;
+import br.com.gabxdev.dto.response.projection.SentPendingFriendRequestProjection;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.exception.UserBlockedException;
@@ -12,8 +14,6 @@ import br.com.gabxdev.model.pk.FriendRequestId;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.repository.FriendRequestRepository;
 import br.com.gabxdev.repository.FriendshipRepository;
-import br.com.gabxdev.response.projection.ReceivedPendingFriendRequestProjection;
-import br.com.gabxdev.response.projection.SentPendingFriendRequestProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

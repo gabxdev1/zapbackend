@@ -6,7 +6,6 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
 
 import java.time.Instant;
 

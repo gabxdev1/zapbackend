@@ -1,10 +1,10 @@
 package br.com.gabxdev.repository;
 
+import br.com.gabxdev.dto.response.projection.ReceivedPendingFriendRequestProjection;
+import br.com.gabxdev.dto.response.projection.SentPendingFriendRequestProjection;
 import br.com.gabxdev.model.FriendRequest;
 import br.com.gabxdev.model.enums.RequestStatus;
 import br.com.gabxdev.model.pk.FriendRequestId;
-import br.com.gabxdev.response.projection.ReceivedPendingFriendRequestProjection;
-import br.com.gabxdev.response.projection.SentPendingFriendRequestProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
