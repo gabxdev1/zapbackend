@@ -9,6 +9,7 @@ import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.repository.PrivateMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -49,20 +50,22 @@ public class PrivateMessageService {
         return repository.save(privateMessage);
     }
 
-    public PrivateMessage updatePrivateMessageStatusAndReadAt(Long privateMessageId, MessageStatus status) {
-        var message = findByIdOrThrowNotFound(privateMessageId);
+    @Transactional
+    public PrivateMessage updatePrivateMessageStatusSafely(Long messageId, MessageStatus newStatus) {
+        var message = findByIdOrThrowNotFound(messageId);
 
-        message.getMessage().setStatus(status);
-        message.getMessage().setReadAt(Instant.now());
+        var currentStatus = message.getMessage().getStatus();
 
-        return repository.save(message);
-    }
+        if (newStatus.status > currentStatus.status) {
+            message.getMessage().setStatus(newStatus);
 
-    public PrivateMessage updatePrivateMessageStatusAndReceivedAt(Long privateMessageId, MessageStatus status) {
-        var message = findByIdOrThrowNotFound(privateMessageId);
+            var now = Instant.now();
 
-        message.getMessage().setStatus(status);
-        message.getMessage().setReceivedAt(Instant.now());
+            switch (newStatus) {
+                case RECEIVED -> message.getMessage().setReceivedAt(now);
+                case READ -> message.getMessage().setReadAt(now);
+            }
+        }
 
         return repository.save(message);
     }

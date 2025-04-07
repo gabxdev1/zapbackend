@@ -1,6 +1,6 @@
 package br.com.gabxdev.dto.request.privateMessage;
 
-public record MessageReadNotificationRequest(
+public record PrivateMessageReadNotificationRequest(
         Long messageId
 ) {
 }

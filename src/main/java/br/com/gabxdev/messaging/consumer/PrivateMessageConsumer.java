@@ -2,8 +2,12 @@ package br.com.gabxdev.messaging.consumer;
 
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.config.RabbitMQConfig;
+import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReadNotificationRequest;
+import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReceivedNotificationRequest;
+import br.com.gabxdev.dto.request.privateMessage.PrivateMessageSendRequest;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
-import br.com.gabxdev.messaging.wrapper.PrivateMessageWrapper;
+import br.com.gabxdev.messaging.wrapper.MessageWrapper;
+import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.service.PrivateMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -23,13 +27,13 @@ public class PrivateMessageConsumer {
     private final AuthUtil authUtil;
 
     @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_QUEUE)
-    public void consumeMessage(PrivateMessageWrapper privateMessageWrapper) {
-        var request = privateMessageWrapper.request();
+    public void consumeMessage(MessageWrapper<PrivateMessageSendRequest> messageWrapper) {
+        var request = messageWrapper.request();
 
         authUtil.createAuthenticationAndSetAuthenticationContext(
-                privateMessageWrapper.senderId(),
-                privateMessageWrapper.senderEmail(),
-                privateMessageWrapper.roles());
+                messageWrapper.senderId(),
+                messageWrapper.senderEmail(),
+                messageWrapper.roles());
 
         var message = service.savePrivateMessage(request);
 
@@ -38,6 +42,40 @@ public class PrivateMessageConsumer {
         messagingTemplate.convertAndSendToUser(
                 response.recipient().getEmail(),
                 "/queue/messages",
+                response
+        );
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_READ_QUEUE)
+    public void processReadMessage(MessageWrapper<PrivateMessageReadNotificationRequest> messageWrapper) {
+        var request = messageWrapper.request();
+
+        var privateMessageUpdated = service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.READ);
+
+        var senderEmail = privateMessageUpdated.getSender().getEmail();
+
+        var response = mapper.toPrivateMessageReadResponse(privateMessageUpdated);
+
+        messagingTemplate.convertAndSendToUser(
+                senderEmail,
+                "/queue/messages/status",
+                response
+        );
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_RECEIVED_QUEUE)
+    public void processReceivedMessage(MessageWrapper<PrivateMessageReceivedNotificationRequest> messageWrapper) {
+        var request = messageWrapper.request();
+
+        var privateMessageUpdated = service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.RECEIVED);
+
+        var senderEmail = privateMessageUpdated.getSender().getEmail();
+
+        var response = mapper.toPrivateMessageReadResponse(privateMessageUpdated);
+
+        messagingTemplate.convertAndSendToUser(
+                senderEmail,
+                "/queue/messages/status",
                 response
         );
     }
