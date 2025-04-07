@@ -4,6 +4,8 @@ import br.com.gabxdev.Audit.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -14,8 +16,8 @@ import lombok.*;
 public class PrivateMessage extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false, updatable = false)

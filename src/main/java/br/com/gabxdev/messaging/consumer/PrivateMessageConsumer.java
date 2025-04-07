@@ -5,6 +5,7 @@ import br.com.gabxdev.config.RabbitMQConfig;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
+import br.com.gabxdev.mapper.MessageMapper;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
 import br.com.gabxdev.model.enums.MessageStatus;
@@ -20,7 +21,9 @@ public class PrivateMessageConsumer {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private final PrivateMessageMapper mapper;
+    private final PrivateMessageMapper privateMessageMapper;
+
+    private final MessageMapper messageMapper;
 
     private final PrivateMessageService service;
 
@@ -37,12 +40,20 @@ public class PrivateMessageConsumer {
 
         var message = service.savePrivateMessage(request);
 
-        var response = mapper.toPrivateMessageSendResponse(message);
+        var response = privateMessageMapper.toPrivateMessageSendResponse(message);
 
         messagingTemplate.convertAndSendToUser(
-                response.recipient().getEmail(),
+                message.getRecipient().getEmail(),
                 "/queue/messages",
                 response
+        );
+
+        var ack = messageMapper.toMessageStatusNotificationAck(message);
+
+        messagingTemplate.convertAndSendToUser(
+                message.getSender().getEmail(),
+                "/queue/messages/status",
+                ack
         );
     }
 
@@ -54,7 +65,7 @@ public class PrivateMessageConsumer {
 
         var senderEmail = privateMessageUpdated.getSender().getEmail();
 
-        var response = mapper.toPrivateMessageReadResponse(privateMessageUpdated);
+        var response = messageMapper.toMessageStatusNotificationRead(privateMessageUpdated);
 
         messagingTemplate.convertAndSendToUser(
                 senderEmail,
@@ -71,7 +82,7 @@ public class PrivateMessageConsumer {
 
         var senderEmail = privateMessageUpdated.getSender().getEmail();
 
-        var response = mapper.toPrivateMessageReadResponse(privateMessageUpdated);
+        var response = messageMapper.toMessageStatusNotificationReceived(privateMessageUpdated);
 
         messagingTemplate.convertAndSendToUser(
                 senderEmail,

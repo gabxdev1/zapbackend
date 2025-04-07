@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class PrivateMessageService {
 
     private final AuthUtil authUtil;
 
-    private PrivateMessage findByIdOrThrowNotFound(Long messageId) {
+    private PrivateMessage findByIdOrThrowNotFound(UUID messageId) {
         return repository.findById(messageId)
                 .orElseThrow(() -> new NotFoundException("Private message %d not found".formatted(messageId)));
     }
@@ -52,7 +53,7 @@ public class PrivateMessageService {
     }
 
     @Transactional
-    public PrivateMessage updatePrivateMessageStatusSafely(Long messageId, MessageStatus newStatus) {
+    public PrivateMessage updatePrivateMessageStatusSafely(UUID messageId, MessageStatus newStatus) {
         var message = findByIdOrThrowNotFound(messageId);
 
         var currentStatus = message.getMessage().getStatus();
