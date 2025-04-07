@@ -1,13 +1,11 @@
-package br.com.gabxdev.dto.request;
+package br.com.gabxdev.dto.request.friend_request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-public record FriendRequestPutRequest(
-
+public record FriendRequestPostRequest(
         @NotNull
         @Min(1)
-        Long senderId
-
+        Long receiverId
 ) {
 }

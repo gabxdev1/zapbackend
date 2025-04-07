@@ -1,4 +1,4 @@
-package br.com.gabxdev.dto.request;
+package br.com.gabxdev.dto.request.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

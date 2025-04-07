@@ -1,6 +1,6 @@
 package br.com.gabxdev.mapper;
 
-import br.com.gabxdev.dto.request.FriendshipDeleteRequest;
+import br.com.gabxdev.dto.request.friend_ship.FriendshipDeleteRequest;
 import br.com.gabxdev.model.User;
 import br.com.gabxdev.model.pk.FriendshipId;
 import org.mapstruct.Mapper;

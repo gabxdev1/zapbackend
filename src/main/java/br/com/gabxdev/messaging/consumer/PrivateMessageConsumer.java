@@ -2,9 +2,9 @@ package br.com.gabxdev.messaging.consumer;
 
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.config.RabbitMQConfig;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReadNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReceivedNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageSendRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
 import br.com.gabxdev.model.enums.MessageStatus;

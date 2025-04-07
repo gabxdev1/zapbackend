@@ -1,8 +1,8 @@
 package br.com.gabxdev.controller.webscoket;
 
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReadNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReceivedNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageSendRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.messaging.producer.PrivateMessageProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;

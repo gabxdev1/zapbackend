@@ -1,8 +1,8 @@
 package br.com.gabxdev.controller.rest;
 
-import br.com.gabxdev.dto.request.FriendRequestDeleteRequest;
-import br.com.gabxdev.dto.request.FriendRequestPostRequest;
-import br.com.gabxdev.dto.request.FriendRequestPutRequest;
+import br.com.gabxdev.dto.request.friend_request.FriendRequestDeleteRequest;
+import br.com.gabxdev.dto.request.friend_request.FriendRequestPostRequest;
+import br.com.gabxdev.dto.request.friend_request.FriendRequestPutRequest;
 import br.com.gabxdev.dto.response.projection.ReceivedPendingFriendRequestProjection;
 import br.com.gabxdev.dto.response.projection.SentPendingFriendRequestProjection;
 import br.com.gabxdev.mapper.FriendRequestMapper;

@@ -1,7 +1,7 @@
 package br.com.gabxdev.service;
 
 import br.com.gabxdev.commons.AuthUtil;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageSendRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.MessageEmbeddable;
 import br.com.gabxdev.model.PrivateMessage;
