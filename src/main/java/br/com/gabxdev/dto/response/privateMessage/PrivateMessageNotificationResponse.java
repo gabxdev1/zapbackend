@@ -1,21 +1,16 @@
 package br.com.gabxdev.dto.response.privateMessage;
 
 import br.com.gabxdev.dto.response.audit.AuditFullDetailsResponse;
-import br.com.gabxdev.model.User;
 import br.com.gabxdev.model.enums.MessageStatus;
 
-import java.time.Instant;
+import java.util.UUID;
 
-public record PrivateMessageSendResponse(
-        Long id,
+public record PrivateMessageNotificationResponse(
+        UUID messageId,
 
-        User recipient,
+        Long senderId,
 
         String content,
-
-        Instant readAt,
-
-        Instant receivedAt,
 
         MessageStatus status,
 

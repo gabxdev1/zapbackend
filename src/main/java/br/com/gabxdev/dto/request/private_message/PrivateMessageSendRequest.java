@@ -3,12 +3,13 @@ package br.com.gabxdev.dto.request.private_message;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 public record PrivateMessageSendRequest(
 
-        @NotNull
-        Long recipientId,
+        @NotNull @org.hibernate.validator.constraints.UUID UUID messageId,
 
-        @NotBlank
-        String content
-) {
+        @NotNull Long recipientId,
+
+        @NotBlank String content) {
 }
