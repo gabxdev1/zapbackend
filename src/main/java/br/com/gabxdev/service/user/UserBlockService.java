@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.service.user;
 
 import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
@@ -7,6 +7,7 @@ import br.com.gabxdev.model.UserBlock;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.model.pk.UserBlockId;
 import br.com.gabxdev.repository.UserBlockRepository;
+import br.com.gabxdev.service.friendship.FriendshipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

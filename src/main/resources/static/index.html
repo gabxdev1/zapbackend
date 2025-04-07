@@ -22,7 +22,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
 
 <script>
-    const jwtToken = 'eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI2Mjk5ZjdjZS05OWRkLTQ1YWYtYTI2Mi00NmRhMDlkYThiYzQiLCJpc3MiOiJici5jb20uZ2FieGRldiIsInJvbGUiOiJST0xFX1VTRVIiLCJ1aWQiOjEsImF1ZCI6WyJ6YXBiYWNrZW5kLXdlYi1hcHAiXSwianRpIjoiMTFlYmU0OGYtNGVjMi00NWNiLWI2ZmYtMjJiMjg5YTc1Njg3IiwiaWF0IjoxNzQzOTkxNDAxLCJleHAiOjE3NDM5OTUwMDF9.uXv-PRWqGySZuR34xR8DySlcEDL_u-GCkBw9vnDgZyhOt4dHPhGYJnl-KNwUfEXl';
+    const jwtToken = 'eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI4NzQwOWE2OS0yNzE5LTQ5MzItOWNlNy0zNjhlODQ0ZTYwOGQiLCJpc3MiOiJici5jb20uZ2FieGRldiIsInJvbGUiOiJST0xFX1VTRVIiLCJ1aWQiOjIsImF1ZCI6WyJ6YXBiYWNrZW5kLXdlYi1hcHAiXSwianRpIjoiNzk1YTBjODgtZTdhMC00NTI2LTg0NjUtMDcxOWMzNTc1ZTdlIiwiaWF0IjoxNzQ0MDUxNzMyLCJleHAiOjE3NDQwNTUzMzJ9.kF4OM7FgI3rIHKroyT51_vw_BIxsqkL42bYzk4i2ofWpfGROFrjAVyNVmFDvVxfF';
 
     const client = new StompJs.Client({
         brokerURL: 'ws://localhost:8080/zapbackend-ws?token=' + jwtToken,

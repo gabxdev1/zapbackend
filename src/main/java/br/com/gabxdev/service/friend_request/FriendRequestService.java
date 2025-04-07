@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.service.friend_request;
 
 import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
@@ -14,6 +14,7 @@ import br.com.gabxdev.model.pk.FriendRequestId;
 import br.com.gabxdev.model.pk.FriendshipId;
 import br.com.gabxdev.repository.FriendRequestRepository;
 import br.com.gabxdev.repository.FriendshipRepository;
+import br.com.gabxdev.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

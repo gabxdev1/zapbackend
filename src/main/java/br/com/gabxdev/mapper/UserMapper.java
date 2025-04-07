@@ -12,17 +12,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.Instant;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
 
-
     @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")
-    @Mapping(target = "status", expression = "java(br.com.gabxdev.model.enums.UserStatus.ONLINE)")
-    @Mapping(target = "lastSeen", expression = "java(java.time.Instant.now())")
+    @Mapping(target = "presence.lastSeenAt", expression = "java(java.time.Instant.now())")
+    @Mapping(target = "presence.status", expression = "java(br.com.gabxdev.model.enums.UserStatus.ONLINE)")
     User toEntity(RegisterPostRequest request);
 
     @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")

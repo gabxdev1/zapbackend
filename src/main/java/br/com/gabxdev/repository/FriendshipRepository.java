@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface FriendshipRepository extends JpaRepository<Friendship, FriendshipId> {
@@ -33,8 +34,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Friendsh
                         ELSE f.user1.email
                     END,
                     CASE
-                        WHEN f.user1.id = :currentUserId THEN f.user2.lastSeen
-                        ELSE f.user1.lastSeen
+                        WHEN f.user1.id = :currentUserId THEN f.user2.presence.lastSeenAt
+                        ELSE f.user1.presence.lastSeenAt
                     END,
                     f.createdAt
                 )
@@ -42,6 +43,17 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Friendsh
             WHERE (f.user1.id = :currentUserId OR f.user2.id = :currentUserId)
             """)
     Page<FriendshipGetResponse> findAllFriendshipByUserIdPaginated(Long currentUserId, Pageable pageable);
+
+    @Query("""
+            SELECT
+                CASE
+                    WHEN f.user1.id = :currentUserId THEN f.user2.email
+                    ELSE f.user1.email
+                END
+            FROM Friendship f
+            WHERE (f.user1.id = :currentUserId OR f.user2.id = :currentUserId)
+            """)
+    List<String> findAllEmailFriendshipByUserId(Long currentUserId);
 
     @Query("""
             SELECT f FROM Friendship f

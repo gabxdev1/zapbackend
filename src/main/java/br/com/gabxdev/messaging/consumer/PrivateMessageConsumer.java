@@ -8,7 +8,7 @@ import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
 import br.com.gabxdev.model.enums.MessageStatus;
-import br.com.gabxdev.service.PrivateMessageService;
+import br.com.gabxdev.service.private_message.PrivateMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

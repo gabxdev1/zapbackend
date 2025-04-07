@@ -1,4 +1,4 @@
-package br.com.gabxdev.service;
+package br.com.gabxdev.service.group;
 
 import br.com.gabxdev.Rules.GroupMembershipRules;
 import br.com.gabxdev.Rules.UserRelationshipRules;
@@ -7,6 +7,7 @@ import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.model.Group;
 import br.com.gabxdev.repository.GroupRepository;
+import br.com.gabxdev.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -96,4 +96,10 @@ public class AuthUtil {
 
         setAuthenticationContext(createAuthentication(user));
     }
+
+    public Long extractUserId(Principal principal) {
+        setAuthenticationContext(principal);
+
+        return getCurrentUser().getId();
+    }
 }

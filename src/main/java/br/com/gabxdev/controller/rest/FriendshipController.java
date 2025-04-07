@@ -3,7 +3,7 @@ package br.com.gabxdev.controller.rest;
 import br.com.gabxdev.dto.request.friend_ship.FriendshipDeleteRequest;
 import br.com.gabxdev.dto.response.FriendshipGetResponse;
 import br.com.gabxdev.mapper.FriendshipMapper;
-import br.com.gabxdev.service.FriendshipService;
+import br.com.gabxdev.service.friendship.FriendshipService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

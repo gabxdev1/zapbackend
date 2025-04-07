@@ -14,6 +14,8 @@ public class RabbitMQConfig {
 
     public static final String PRIVATE_MESSAGE_RECEIVED_QUEUE = "private.message.received.queue";
 
+    public static final String PRESENCE_CHANGE_QUEUE = "presence.change.queue";
+
     @Bean
     public Queue privateMessageQueue() {
         return new Queue(PRIVATE_MESSAGE_QUEUE, true);
@@ -27,6 +29,11 @@ public class RabbitMQConfig {
     @Bean
     public Queue privateMessageReceivedQueue() {
         return new Queue(PRIVATE_MESSAGE_RECEIVED_QUEUE, true);
+    }
+
+    @Bean
+    public Queue presenceChangeQueue() {
+        return new Queue(PRESENCE_CHANGE_QUEUE, true);
     }
 
     @Bean

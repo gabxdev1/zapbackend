@@ -7,7 +7,7 @@ import br.com.gabxdev.dto.response.group.GroupGetResponse;
 import br.com.gabxdev.dto.response.group.GroupPostResponse;
 import br.com.gabxdev.dto.response.group.GroupPutResponse;
 import br.com.gabxdev.mapper.GroupMapper;
-import br.com.gabxdev.service.GroupService;
+import br.com.gabxdev.service.group.GroupService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

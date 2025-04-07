@@ -25,6 +25,7 @@ public class AuthService {
         assertEmailDoesNotExists(newUser.getEmail());
 
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        newUser.getPresence().setUser(newUser);
 
         return userRepository.save(newUser);
     }
