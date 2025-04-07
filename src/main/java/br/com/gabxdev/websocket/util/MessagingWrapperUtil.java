@@ -1,9 +1,9 @@
 package br.com.gabxdev.websocket.util;
 
 import br.com.gabxdev.commons.AuthUtil;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReadNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReceivedNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageSendRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
 import br.com.gabxdev.model.User;
 import lombok.RequiredArgsConstructor;

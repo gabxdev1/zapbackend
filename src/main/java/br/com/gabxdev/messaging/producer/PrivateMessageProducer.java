@@ -1,9 +1,9 @@
 package br.com.gabxdev.messaging.producer;
 
 import br.com.gabxdev.config.RabbitMQConfig;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReadNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageReceivedNotificationRequest;
-import br.com.gabxdev.dto.request.privateMessage.PrivateMessageSendRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
+import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.websocket.util.MessagingWrapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

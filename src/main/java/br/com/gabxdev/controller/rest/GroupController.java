@@ -1,8 +1,8 @@
 package br.com.gabxdev.controller.rest;
 
 import br.com.gabxdev.commons.HeaderUtils;
-import br.com.gabxdev.dto.request.GroupPostRequest;
-import br.com.gabxdev.dto.request.GroupPutRequest;
+import br.com.gabxdev.dto.request.group.GroupPostRequest;
+import br.com.gabxdev.dto.request.group.GroupPutRequest;
 import br.com.gabxdev.dto.response.group.GroupGetResponse;
 import br.com.gabxdev.dto.response.group.GroupPostResponse;
 import br.com.gabxdev.dto.response.group.GroupPutResponse;

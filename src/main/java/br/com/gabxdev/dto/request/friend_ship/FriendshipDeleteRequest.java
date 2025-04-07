@@ -1,4 +1,4 @@
-package br.com.gabxdev.dto.request;
+package br.com.gabxdev.dto.request.friend_ship;
 
 import jakarta.validation.constraints.Min;
 

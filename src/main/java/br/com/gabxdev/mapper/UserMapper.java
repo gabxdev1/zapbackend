@@ -1,7 +1,7 @@
 package br.com.gabxdev.mapper;
 
 import br.com.gabxdev.dto.request.RegisterPostRequest;
-import br.com.gabxdev.dto.request.UserPutRequest;
+import br.com.gabxdev.dto.request.user.UserPutRequest;
 import br.com.gabxdev.dto.response.RegisterPostResponse;
 import br.com.gabxdev.dto.response.audit.UserAuditDetailsResponse;
 import br.com.gabxdev.dto.response.user.UserGetResponse;
@@ -12,12 +12,17 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.Instant;
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
+
+
     @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")
+    @Mapping(target = "status", expression = "java(br.com.gabxdev.model.enums.UserStatus.ONLINE)")
+    @Mapping(target = "lastSeen", expression = "java(java.time.Instant.now())")
     User toEntity(RegisterPostRequest request);
 
     @Mapping(target = "role", expression = "java(br.com.gabxdev.model.enums.Role.ROLE_USER)")

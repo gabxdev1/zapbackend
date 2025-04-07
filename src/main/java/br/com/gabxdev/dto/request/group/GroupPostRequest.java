@@ -1,4 +1,4 @@
-package br.com.gabxdev.dto.request;
+package br.com.gabxdev.dto.request.group;
 
 import jakarta.validation.constraints.NotBlank;
 
