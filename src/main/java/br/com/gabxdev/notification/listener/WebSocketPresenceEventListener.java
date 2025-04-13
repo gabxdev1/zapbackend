@@ -1,13 +1,14 @@
 package br.com.gabxdev.notification.listener;
 
-import br.com.gabxdev.messaging.producer.UserPresenceChangeProducer;
+import br.com.gabxdev.config.RabbitMQConfig;
+import br.com.gabxdev.messaging.producer.Producer;
 import br.com.gabxdev.model.enums.UserStatus;
 import br.com.gabxdev.notification.dto.UserPresenceStatusEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.time.Instant;
@@ -17,10 +18,10 @@ import java.time.Instant;
 @Slf4j
 public class WebSocketPresenceEventListener {
 
-    private final UserPresenceChangeProducer producer;
+    private final Producer producer;
 
     @EventListener
-    public void handleWebSocketConnect(SessionConnectEvent event) {
+    public void handleWebSocketConnect(SessionConnectedEvent event) {
         var request = UserPresenceStatusEvent.builder()
                 .status(UserStatus.ONLINE)
                 .lastSeenAt(Instant.now())
@@ -30,8 +31,9 @@ public class WebSocketPresenceEventListener {
 
         log.debug("WebSocket connected - UserEmail: {}", email);
 
-        producer.sendPresenceChange(request, event.getUser());
+        producer.sendMessage(request, event.getUser(), RabbitMQConfig.PRESENCE_CHANGE_QUEUE);
     }
+
 
     @EventListener
     public void handleWebSocketDisconnect(SessionDisconnectEvent event) {
@@ -44,6 +46,6 @@ public class WebSocketPresenceEventListener {
 
         log.debug("WebSocket disconnected - UserEmail: {}, LastSeenAt: {}", email, request.lastSeenAt());
 
-        producer.sendPresenceChange(request, event.getUser());
+        producer.sendMessage(request, event.getUser(), RabbitMQConfig.PRESENCE_CHANGE_QUEUE);
     }
 }

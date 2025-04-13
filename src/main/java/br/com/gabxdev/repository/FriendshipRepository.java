@@ -2,6 +2,7 @@ package br.com.gabxdev.repository;
 
 import br.com.gabxdev.dto.response.FriendshipGetResponse;
 import br.com.gabxdev.model.Friendship;
+import br.com.gabxdev.model.User;
 import br.com.gabxdev.model.pk.FriendshipId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +55,13 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Friendsh
             WHERE (f.user1.id = :currentUserId OR f.user2.id = :currentUserId)
             """)
     List<String> findAllEmailFriendshipByUserId(Long currentUserId);
+
+    @Query("""
+                SELECT f.user2 FROM Friendship f WHERE f.user1.id = :currentUserId
+                UNION
+                SELECT f.user1 FROM Friendship f WHERE f.user2.id = :currentUserId
+            """)
+    List<User> findFriendsOf(Long currentUserId);
 
     @Query("""
             SELECT f FROM Friendship f

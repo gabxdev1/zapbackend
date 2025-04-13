@@ -36,8 +36,6 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
             var auth = authUtil.getAuthentication(userId);
 
-            attributes.put("auth", auth);
-
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             log.debug("WebSocket handshake authenticated successfully for userId {}", userId);

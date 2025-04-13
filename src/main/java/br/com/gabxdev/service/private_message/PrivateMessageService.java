@@ -2,13 +2,18 @@ package br.com.gabxdev.service.private_message;
 
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
+import br.com.gabxdev.dto.response.privateMessage.PrivateMessageGetResponse;
 import br.com.gabxdev.exception.NotFoundException;
+import br.com.gabxdev.mapper.PrivateMessageMapper;
 import br.com.gabxdev.model.MessageEmbeddable;
 import br.com.gabxdev.model.PrivateMessage;
 import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.repository.PrivateMessageRepository;
 import br.com.gabxdev.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +29,9 @@ public class PrivateMessageService {
     private final UserService userService;
 
     private final AuthUtil authUtil;
+
+    private final PrivateMessageMapper privateMessageMapper;
+
 
     private PrivateMessage findByIdOrThrowNotFound(UUID messageId) {
         return repository.findById(messageId)
@@ -44,6 +52,7 @@ public class PrivateMessageService {
                 .build();
 
         var privateMessage = PrivateMessage.builder()
+                .id(request.messageId())
                 .sender(sender)
                 .recipient(recipient)
                 .message(message)
@@ -70,5 +79,16 @@ public class PrivateMessageService {
         }
 
         return repository.save(message);
+    }
+
+    public Slice<PrivateMessageGetResponse> getMessagesBetweenUsers(Long receivedId, int page, int size) {
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Long currentUserId = authUtil.getCurrentUser().getId();
+
+        return repository.findBySenderIdAndRecipientIdOrSenderIdAndRecipientIdOrderByCreatedAtDesc(
+                        currentUserId, receivedId, receivedId, currentUserId, pageable
+                )
+                .map(privateMessageMapper::toPrivateMessageGetResponse);
     }
 }

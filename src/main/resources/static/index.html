@@ -1,75 +1,188 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Chat Privado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        #chatContainer {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        input, button {
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #sendBtn, #connectBtn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        #sendBtn:hover, #connectBtn:hover {
+            background-color: #45a049;
+        }
+
+        #messages, #statuses {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fdfdfd;
+        }
+
+        .message, .status {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
-<h1>Chat Privado</h1>
+<div id="chatContainer">
+    <h1>Chat Privado</h1>
 
-<label>ID do destinatário:</label>
-<input type="number" id="recipientId"><br><br>
+    <label for="tokenInput"><strong>Token JWT:</strong></label>
+    <input type="text" id="tokenInput" placeholder="Token JWT" style="width: 70%;">
+    <button id="connectBtn">Conectar</button>
 
-<label>Mensagem:</label>
-<input type="text" id="message"><br><br>
+    <hr />
 
-<button id="sendBtn">Enviar</button>
+    <label>ID do destinatário:</label>
+    <input type="number" id="recipientId" /><br />
 
-<h2>Mensagens Recebidas:</h2>
-<div id="messages"></div>
+    <label>Mensagem:</label>
+    <input type="text" id="message" /><br />
 
-<!-- ✅ STOMP puro via CDN -->
+    <button id="sendBtn" disabled>Enviar</button>
+
+    <h2>Mensagens Recebidas:</h2>
+    <div id="messages"></div>
+
+    <h2>Status de Mensagens:</h2>
+    <div id="statuses"></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
 
 <script>
-    const jwtToken = 'eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI4NzQwOWE2OS0yNzE5LTQ5MzItOWNlNy0zNjhlODQ0ZTYwOGQiLCJpc3MiOiJici5jb20uZ2FieGRldiIsInJvbGUiOiJST0xFX1VTRVIiLCJ1aWQiOjIsImF1ZCI6WyJ6YXBiYWNrZW5kLXdlYi1hcHAiXSwianRpIjoiNzk1YTBjODgtZTdhMC00NTI2LTg0NjUtMDcxOWMzNTc1ZTdlIiwiaWF0IjoxNzQ0MDUxNzMyLCJleHAiOjE3NDQwNTUzMzJ9.kF4OM7FgI3rIHKroyT51_vw_BIxsqkL42bYzk4i2ofWpfGROFrjAVyNVmFDvVxfF';
+    let client;
+    const receivedMessages = new Map();
 
-    const client = new StompJs.Client({
-        brokerURL: 'ws://localhost:8080/zapbackend-ws?token=' + jwtToken,
-        reconnectDelay: 5000,
-        debug: (str) => console.log('[STOMP]', str)
-    });
+    function generateUUID() {
+        return crypto.randomUUID();
+    }
 
-    client.onConnect = function (frame) {
-        console.log('✅ Conectado:', frame);
-
-        client.subscribe('/user/queue/messages', function (message) {
-            const body = JSON.parse(message.body);
-            console.log('[Mensagem recebida do back-end]', body);
-
-            const messagesDiv = document.getElementById('messages');
-
-            const content = body.content || 'Mensagem não disponível';
-            const status = body.status || 'Status não disponível';
-            const sentAt = body.audit?.createdAt || 'Data não disponível';
-            const senderName = body.audit?.createdBy
-                ? `${body.audit.createdBy.firstName} ${body.audit.createdBy.lastName}`
-                : 'Usuário desconhecido';
-
-            const html = `
-                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-                    <p><strong>De:</strong> ${senderName}</p>
-                    <p><strong>Mensagem:</strong> ${content}</p>
-                    <p><strong>Status:</strong> ${status}</p>
-                    <p><strong>Enviada em:</strong> ${sentAt}</p>
-                </div>
-            `;
-
-            messagesDiv.innerHTML += html;
+    function connect(jwtToken) {
+        client = new StompJs.Client({
+            brokerURL: 'ws://localhost:8080/zapbackend-ws?token=' + jwtToken,
+            reconnectDelay: 5000,
+            debug: str => console.log('[STOMP]', str)
         });
-    };
 
-    client.onStompError = function (frame) {
-        console.error('❌ STOMP erro:', frame);
-    };
+        client.onConnect = function (frame) {
+            console.log('✅ Conectado:', frame);
+            document.getElementById('sendBtn').disabled = false;
 
-    client.activate();
+            //USER/USERID/queue
+            client.subscribe('/user/queue/messages', function (message) {
+                const body = JSON.parse(message.body);
+                console.log('[Recebida]', body);
+
+                const messageId = body.messageId;
+                receivedMessages.set(messageId, false);
+
+                client.publish({
+                    destination: '/app/private-message-received',
+                    body: JSON.stringify({ messageId })
+                });
+
+                const messagesDiv = document.getElementById('messages');
+
+                const content = body.content || 'Mensagem não disponível';
+                const status = body.status || 'Status não disponível';
+                const sentAt = body.audit?.createdAt || 'Data não disponível';
+                const senderName = body.audit?.createdBy
+                    ? `${body.audit.createdBy.firstName} ${body.audit.createdBy.lastName}`
+                    : 'Usuário desconhecido';
+
+                const html = `
+            <div class="message">
+              <p><strong>De:</strong> ${senderName}</p>
+              <p><strong>Mensagem:</strong> ${content}</p>
+              <p><strong>Status:</strong> ${status}</p>
+              <p><strong>Enviada em:</strong> ${sentAt}</p>
+            </div>
+          `;
+
+                messagesDiv.innerHTML += html;
+            });
+
+            client.subscribe('/user/queue/status', function (message) {
+                const body = JSON.parse(message.body);
+                console.log('[Status ACK]', body);
+
+                const statusesDiv = document.getElementById('statuses');
+
+                const html = `
+            <div class="status">
+              <p><strong>ID da mensagem:</strong> ${body.messageId}</p>
+              <p><strong>Status:</strong> ${body.status}</p>
+              <p><strong>Horário:</strong> ${body.timestamp}</p>
+            </div>
+          `;
+
+                statusesDiv.innerHTML += html;
+            });
+        };
+
+        client.onStompError = function (frame) {
+            console.error('❌ STOMP erro:', frame);
+        };
+
+        client.activate();
+    }
+
+    document.getElementById('connectBtn').addEventListener('click', () => {
+        const jwtToken = document.getElementById('tokenInput').value.trim();
+        if (!jwtToken) {
+            alert('Você precisa informar um token JWT válido.');
+            return;
+        }
+
+        connect(jwtToken);
+    });
 
     document.getElementById('sendBtn').addEventListener('click', () => {
         const recipientId = parseInt(document.getElementById('recipientId').value);
         const content = document.getElementById('message').value;
 
+        if (!recipientId || !content) {
+            alert('Informe um destinatário e uma mensagem!');
+            return;
+        }
+
         const payload = {
+            messageId: generateUUID(),
             recipientId,
             content
         };
@@ -80,6 +193,18 @@
         });
 
         document.getElementById('message').value = '';
+    });
+
+    window.addEventListener('focus', () => {
+        for (const [messageId, alreadyRead] of receivedMessages.entries()) {
+            if (!alreadyRead) {
+                client.publish({
+                    destination: '/app/private-message-read',
+                    body: JSON.stringify({ messageId })
+                });
+                receivedMessages.set(messageId, true);
+            }
+        }
     });
 </script>
 </body>
