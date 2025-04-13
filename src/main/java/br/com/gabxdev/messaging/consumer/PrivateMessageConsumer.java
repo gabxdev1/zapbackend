@@ -4,14 +4,19 @@ import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
+import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.mapper.MessageMapper;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
+import br.com.gabxdev.model.PrivateMessage;
 import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.service.private_message.PrivateMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import static br.com.gabxdev.config.RabbitMQConfig.QueueNames.*;
@@ -31,7 +36,7 @@ public class PrivateMessageConsumer {
     private final AuthUtil authUtil;
 
     @RabbitListener(queues = PRIVATE_MESSAGE)
-    public void consumeMessage(MessageWrapper<PrivateMessageSendRequest> messageWrapper) {
+    public void processPrivateMessage(MessageWrapper<PrivateMessageSendRequest> messageWrapper) {
         var request = messageWrapper.request();
 
         authUtil.createAuthenticationAndSetAuthenticationContext(

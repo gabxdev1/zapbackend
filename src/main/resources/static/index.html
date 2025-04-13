@@ -153,6 +153,11 @@
 
                 statusesDiv.innerHTML += html;
             });
+
+            client.subscribe('/user/queue/message.delivery.failed', function (message) {
+                const body = JSON.parse(message.body);
+                console.log('[mensagem falha]', body);
+            });
         };
 
         client.onStompError = function (frame) {
