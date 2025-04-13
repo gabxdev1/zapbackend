@@ -7,7 +7,9 @@ import java.util.UUID;
 
 public record PrivateMessageSendRequest(
 
-        @NotNull @org.hibernate.validator.constraints.UUID UUID messageId,
+        @NotNull
+        @org.hibernate.validator.constraints.UUID
+        UUID messageId,
 
         @NotNull Long recipientId,
 

@@ -27,37 +27,39 @@ public class JwtUtil {
 
     public String generateToken(Long userId, Role role) {
         var now = Instant.now();
+
         var expirationSeconds = properties.getJwt().getExpirationSeconds();
+
         var expirationDate = Date.from(now.plusSeconds(expirationSeconds));
 
         return Jwts.builder()
                 .subject(UUID.randomUUID().toString())
-                .issuer("br.com.gabxdev")
+                .issuer("https://gabxdev.gabxdev.com")
                 .claim("role", role)
                 .claim("uid", userId)
                 .audience().add("zapbackend-web-app")
                 .and()
-                .id(UUID.randomUUID().toString())
                 .issuedAt(Date.from(now))
                 .expiration(expirationDate)
-                .signWith(getSecretKey(), Jwts.SIG.HS384)
+                .signWith(getSigningKey(), Jwts.SIG.HS512)
                 .compact();
     }
 
     public Long extractUserIdAndValidate(String token) {
         return Jwts.parser()
-                .verifyWith(getSecretKey())
+                .verifyWith(getSigningKey())
                 .requireAudience("zapbackend-web-app")
-                .requireIssuer("br.com.gabxdev")
+                .requireIssuer("https://gabxdev.gabxdev.com")
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .get("uid", Long.class);
     }
 
-    public SecretKey getSecretKey() {
-        var secretKey = properties.getJwt().getSecretKey();
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+    private SecretKey getSigningKey() {
+        var keyBytes = Decoders.BASE64.decode(properties.getJwt().getSecretKey());
+
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String getTokenFromRequest(HttpServletRequest request) {

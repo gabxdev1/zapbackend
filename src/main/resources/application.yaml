@@ -11,7 +11,7 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         jdbc:
@@ -24,10 +24,10 @@ spring:
   jackson:
     time-zone: UTC
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBIT_HOST}
+    port: ${RABBIT_PORT}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
 zap-backend:
   jwt:
     expiration-seconds: 3600

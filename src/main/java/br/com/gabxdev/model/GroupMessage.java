@@ -16,7 +16,6 @@ import java.util.UUID;
 public class GroupMessage extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne

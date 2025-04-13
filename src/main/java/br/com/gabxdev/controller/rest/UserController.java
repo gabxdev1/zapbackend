@@ -2,6 +2,7 @@ package br.com.gabxdev.controller.rest;
 
 import br.com.gabxdev.anotations.CurrentUser;
 import br.com.gabxdev.dto.request.user.UserPutRequest;
+import br.com.gabxdev.dto.response.privateMessage.PrivateMessageGetResponse;
 import br.com.gabxdev.dto.response.user.UserGetResponse;
 import br.com.gabxdev.dto.response.user.UserPutResponse;
 import br.com.gabxdev.mapper.UserMapper;

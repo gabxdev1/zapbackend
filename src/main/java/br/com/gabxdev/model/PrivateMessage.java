@@ -13,10 +13,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
+@ToString
 public class PrivateMessage extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne

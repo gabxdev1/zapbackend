@@ -52,7 +52,7 @@ public class PrivateMessageConsumer {
 
         messagingTemplate.convertAndSendToUser(
                 message.getSender().getEmail(),
-                "/queue/messages/status",
+                "/queue/status",
                 ack
         );
     }
@@ -60,6 +60,11 @@ public class PrivateMessageConsumer {
     @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_READ_QUEUE)
     public void processReadMessage(MessageWrapper<PrivateMessageReadNotificationRequest> messageWrapper) {
         var request = messageWrapper.request();
+
+        authUtil.createAuthenticationAndSetAuthenticationContext(
+                messageWrapper.senderId(),
+                messageWrapper.senderEmail(),
+                messageWrapper.roles());
 
         var privateMessageUpdated = service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.READ);
 
@@ -69,7 +74,7 @@ public class PrivateMessageConsumer {
 
         messagingTemplate.convertAndSendToUser(
                 senderEmail,
-                "/queue/messages/status",
+                "/queue/status",
                 response
         );
     }
@@ -77,6 +82,11 @@ public class PrivateMessageConsumer {
     @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_RECEIVED_QUEUE)
     public void processReceivedMessage(MessageWrapper<PrivateMessageReceivedNotificationRequest> messageWrapper) {
         var request = messageWrapper.request();
+
+        authUtil.createAuthenticationAndSetAuthenticationContext(
+                messageWrapper.senderId(),
+                messageWrapper.senderEmail(),
+                messageWrapper.roles());
 
         var privateMessageUpdated = service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.RECEIVED);
 
@@ -86,7 +96,7 @@ public class PrivateMessageConsumer {
 
         messagingTemplate.convertAndSendToUser(
                 senderEmail,
-                "/queue/messages/status",
+                "/queue/status",
                 response
         );
     }

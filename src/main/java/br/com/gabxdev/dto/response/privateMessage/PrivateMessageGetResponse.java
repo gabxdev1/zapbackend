@@ -6,7 +6,7 @@ import br.com.gabxdev.model.enums.MessageStatus;
 import java.time.Instant;
 import java.util.UUID;
 
-public record PrivateMessageNotificationResponse(
+public record PrivateMessageGetResponse(
         UUID messageId,
 
         Long senderId,
