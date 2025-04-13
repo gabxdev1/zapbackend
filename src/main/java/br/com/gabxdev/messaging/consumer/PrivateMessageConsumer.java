@@ -1,7 +1,6 @@
 package br.com.gabxdev.messaging.consumer;
 
 import br.com.gabxdev.commons.AuthUtil;
-import br.com.gabxdev.config.RabbitMQConfig;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
@@ -14,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+
+import static br.com.gabxdev.config.RabbitMQConfig.QueueNames.*;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class PrivateMessageConsumer {
 
     private final AuthUtil authUtil;
 
-    @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_QUEUE)
+    @RabbitListener(queues = PRIVATE_MESSAGE)
     public void consumeMessage(MessageWrapper<PrivateMessageSendRequest> messageWrapper) {
         var request = messageWrapper.request();
 
@@ -57,7 +58,7 @@ public class PrivateMessageConsumer {
         );
     }
 
-    @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_READ_QUEUE)
+    @RabbitListener(queues = PRIVATE_MESSAGE_READ)
     public void processReadMessage(MessageWrapper<PrivateMessageReadNotificationRequest> messageWrapper) {
         var request = messageWrapper.request();
 
@@ -79,7 +80,7 @@ public class PrivateMessageConsumer {
         );
     }
 
-    @RabbitListener(queues = RabbitMQConfig.PRIVATE_MESSAGE_RECEIVED_QUEUE)
+    @RabbitListener(queues = PRIVATE_MESSAGE_RECEIVED)
     public void processReceivedMessage(MessageWrapper<PrivateMessageReceivedNotificationRequest> messageWrapper) {
         var request = messageWrapper.request();
 

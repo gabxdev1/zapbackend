@@ -15,9 +15,9 @@ public class Producer {
 
     private final MessagingWrapperUtil messagingUtil;
 
-    public <T> void sendMessage(T request, Principal principal, String queue) {
+    public <T> void sendMessage(T request, Principal principal, String exchange, String routingKey) {
         var requestWrapper = messagingUtil.createMessageWrapper(request, principal);
 
-        rabbitTemplate.convertAndSend(queue, requestWrapper);
+        rabbitTemplate.convertAndSend(exchange, routingKey, requestWrapper);
     }
 }
