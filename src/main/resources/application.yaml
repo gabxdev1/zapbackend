@@ -28,6 +28,9 @@ spring:
     port: ${RABBIT_PORT}
     username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
+    listener:
+      simple:
+        default-requeue-rejected: false
 zap-backend:
   jwt:
     expiration-seconds: 3600
