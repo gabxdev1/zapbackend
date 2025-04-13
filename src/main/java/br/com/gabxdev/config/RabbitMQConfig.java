@@ -1,26 +1,34 @@
 package br.com.gabxdev.config;
 
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String PRIVATE_MESSAGE_QUEUE = "private.message.queue";
+    public static class QueueNames {
+        public static final String PRIVATE_MESSAGE = "queue.chat.private.message";
+        public static final String PRIVATE_MESSAGE_READ = "queue.chat.private.message.read";
+        public static final String PRIVATE_MESSAGE_RECEIVED = "queue.chat.private.message.received";
+        public static final String USER_PRESENCE_CHANGE = "queue.user.presence.change";
+    }
 
-    public static final String PRIVATE_MESSAGE_READ_QUEUE = "private.message.read.queue";
+    public static class RoutingKeys {
+        public static final String PRIVATE_MESSAGE = "routing.chat.private.message";
+        public static final String PRIVATE_MESSAGE_READ = "routing.chat.private.message.read";
+        public static final String PRIVATE_MESSAGE_RECEIVED = "routing.chat.private.message.received";
+        public static final String USER_PRESENCE_CHANGE = "routing.user.presence.change";
+    }
 
-    public static final String PRIVATE_MESSAGE_RECEIVED_QUEUE = "private.message.received.queue";
-
-    public static final String PRESENCE_CHANGE_QUEUE = "presence.change.queue";
-
+    public static class Exchanges {
+        public static final String DIRECT_CHAT_EVENTS = "exchange.chat.events";
+        public static final String DIRECT_USER_EVENTS = "exchange.user.events";
+    }
+    
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
@@ -36,24 +44,68 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public DirectExchange directExchangeChatEvents() {
+        return ExchangeBuilder.directExchange(Exchanges.DIRECT_CHAT_EVENTS)
+                .durable(true)
+                .build();
+    }
+
+    @Bean
+    public DirectExchange directExchangeUserEvents() {
+        return ExchangeBuilder.directExchange(Exchanges.DIRECT_USER_EVENTS)
+                .durable(true)
+                .build();
+    }
+
+    @Bean
     public Queue privateMessageQueue() {
-        return new Queue(PRIVATE_MESSAGE_QUEUE, true);
+        return QueueBuilder.durable(QueueNames.PRIVATE_MESSAGE).build();
     }
 
     @Bean
     public Queue privateMessageReadQueue() {
-        return new Queue(PRIVATE_MESSAGE_READ_QUEUE, true);
+        return QueueBuilder.durable(QueueNames.PRIVATE_MESSAGE_READ).build();
     }
 
     @Bean
     public Queue privateMessageReceivedQueue() {
-        return new Queue(PRIVATE_MESSAGE_RECEIVED_QUEUE, true);
+        return QueueBuilder.durable(QueueNames.PRIVATE_MESSAGE_RECEIVED).build();
     }
 
     @Bean
-    public Queue presenceChangeQueue() {
-        return new Queue(PRESENCE_CHANGE_QUEUE, true);
+    public Queue userPresenceChangeQueue() {
+        return QueueBuilder.durable(QueueNames.USER_PRESENCE_CHANGE).build();
     }
 
+    @Bean
+    public Binding privateMessageBinding() {
+        return BindingBuilder
+                .bind(privateMessageQueue())
+                .to(directExchangeChatEvents())
+                .with(RoutingKeys.PRIVATE_MESSAGE);
+    }
 
+    @Bean
+    public Binding privateMessageReadBinding() {
+        return BindingBuilder
+                .bind(privateMessageReadQueue())
+                .to(directExchangeChatEvents())
+                .with(RoutingKeys.PRIVATE_MESSAGE_READ);
+    }
+
+    @Bean
+    public Binding privateMessageReceivedBinding() {
+        return BindingBuilder
+                .bind(privateMessageReceivedQueue())
+                .to(directExchangeChatEvents())
+                .with(RoutingKeys.PRIVATE_MESSAGE_RECEIVED);
+    }
+
+    @Bean
+    public Binding userPresenceChangeBinding() {
+        return BindingBuilder
+                .bind(userPresenceChangeQueue())
+                .to(directExchangeUserEvents())
+                .with(RoutingKeys.USER_PRESENCE_CHANGE);
+    }
 }

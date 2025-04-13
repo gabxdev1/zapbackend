@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import static br.com.gabxdev.config.RabbitMQConfig.QueueNames.USER_PRESENCE_CHANGE;
+
 @RequiredArgsConstructor
 @Component
 public class UserPresenceChangeConsumer {
@@ -18,7 +20,7 @@ public class UserPresenceChangeConsumer {
 
     private final UserPresenceService userPresenceService;
 
-    @RabbitListener(queues = RabbitMQConfig.PRESENCE_CHANGE_QUEUE)
+    @RabbitListener(queues = USER_PRESENCE_CHANGE)
     public void consumePresenceChange(MessageWrapper<UserPresenceStatusEvent> messageWrapper) {
         var event = messageWrapper.request();
 

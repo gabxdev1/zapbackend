@@ -1,6 +1,5 @@
 package br.com.gabxdev.notification.listener;
 
-import br.com.gabxdev.config.RabbitMQConfig;
 import br.com.gabxdev.messaging.producer.Producer;
 import br.com.gabxdev.model.enums.UserStatus;
 import br.com.gabxdev.notification.dto.UserPresenceStatusEvent;
@@ -12,6 +11,9 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.time.Instant;
+
+import static br.com.gabxdev.config.RabbitMQConfig.Exchanges.DIRECT_USER_EVENTS;
+import static br.com.gabxdev.config.RabbitMQConfig.RoutingKeys.USER_PRESENCE_CHANGE;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class WebSocketPresenceEventListener {
 
         log.debug("WebSocket connected - UserEmail: {}", email);
 
-        producer.sendMessage(request, event.getUser(), RabbitMQConfig.PRESENCE_CHANGE_QUEUE);
+        producer.sendMessage(request, event.getUser(), DIRECT_USER_EVENTS, USER_PRESENCE_CHANGE);
     }
 
 
@@ -46,6 +48,6 @@ public class WebSocketPresenceEventListener {
 
         log.debug("WebSocket disconnected - UserEmail: {}, LastSeenAt: {}", email, request.lastSeenAt());
 
-        producer.sendMessage(request, event.getUser(), RabbitMQConfig.PRESENCE_CHANGE_QUEUE);
+        producer.sendMessage(request, event.getUser(), DIRECT_USER_EVENTS, USER_PRESENCE_CHANGE);
     }
 }
