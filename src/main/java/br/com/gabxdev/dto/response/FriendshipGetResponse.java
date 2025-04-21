@@ -9,7 +9,7 @@ public record FriendshipGetResponse(
 
         String lastName,
 
-        String email,
+        String nickname,
 
         Instant lastSeen,
 

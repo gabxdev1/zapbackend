@@ -4,19 +4,16 @@ import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReadNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotificationRequest;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
-import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.mapper.MessageMapper;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
-import br.com.gabxdev.model.PrivateMessage;
+import br.com.gabxdev.messaging.wrapper.TriggerWrapper;
 import br.com.gabxdev.model.enums.MessageStatus;
+import br.com.gabxdev.notification.notifier.OldMessageNotifier;
 import br.com.gabxdev.service.private_message.PrivateMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import static br.com.gabxdev.config.RabbitMQConfig.QueueNames.*;
@@ -35,6 +32,8 @@ public class PrivateMessageConsumer {
 
     private final AuthUtil authUtil;
 
+    private final OldMessageNotifier oldMessageNotifier;
+
     @RabbitListener(queues = PRIVATE_MESSAGE)
     public void processPrivateMessage(MessageWrapper<PrivateMessageSendRequest> messageWrapper) {
         var request = messageWrapper.request();
@@ -46,7 +45,7 @@ public class PrivateMessageConsumer {
 
         var message = service.savePrivateMessage(request);
 
-        var response = privateMessageMapper.toPrivateMessageSendResponse(message);
+        var response = privateMessageMapper.toPrivateMessageGetResponse(message);
 
         messagingTemplate.convertAndSendToUser(
                 message.getRecipient().getEmail(),
@@ -54,13 +53,23 @@ public class PrivateMessageConsumer {
                 response
         );
 
-        var ack = messageMapper.toMessageStatusNotificationAck(message);
-
         messagingTemplate.convertAndSendToUser(
                 message.getSender().getEmail(),
                 "/queue/status",
-                ack
+                response
         );
+    }
+
+    @RabbitListener(queues = TRIGGER_OLD_MESSAGE)
+    public void processOldMessage(TriggerWrapper triggerWrapper) {
+        authUtil.createAuthenticationAndSetAuthenticationContext(
+                triggerWrapper.senderId(),
+                triggerWrapper.senderEmail(),
+                triggerWrapper.roles());
+
+        var messages = service.getAllOldMessages();
+
+        oldMessageNotifier.notifyUser(messages, triggerWrapper.senderEmail());
     }
 
     @RabbitListener(queues = PRIVATE_MESSAGE_READ)
@@ -72,17 +81,17 @@ public class PrivateMessageConsumer {
                 messageWrapper.senderEmail(),
                 messageWrapper.roles());
 
-        var privateMessageUpdated = service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.READ);
+        service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.READ).ifPresent(privateMessageUpdated -> {
+            var senderEmail = privateMessageUpdated.getSender().getEmail();
 
-        var senderEmail = privateMessageUpdated.getSender().getEmail();
+            var response = privateMessageMapper.toPrivateMessageGetResponse(privateMessageUpdated);
 
-        var response = messageMapper.toMessageStatusNotificationRead(privateMessageUpdated);
-
-        messagingTemplate.convertAndSendToUser(
-                senderEmail,
-                "/queue/status",
-                response
-        );
+            messagingTemplate.convertAndSendToUser(
+                    senderEmail,
+                    "/queue/status",
+                    response
+            );
+        });
     }
 
     @RabbitListener(queues = PRIVATE_MESSAGE_RECEIVED)
@@ -94,16 +103,16 @@ public class PrivateMessageConsumer {
                 messageWrapper.senderEmail(),
                 messageWrapper.roles());
 
-        var privateMessageUpdated = service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.RECEIVED);
+        service.updatePrivateMessageStatusSafely(request.messageId(), MessageStatus.RECEIVED).ifPresent(privateMessageUpdated -> {
+            var senderEmail = privateMessageUpdated.getSender().getEmail();
 
-        var senderEmail = privateMessageUpdated.getSender().getEmail();
+            var response = privateMessageMapper.toPrivateMessageGetResponse(privateMessageUpdated);
 
-        var response = messageMapper.toMessageStatusNotificationReceived(privateMessageUpdated);
-
-        messagingTemplate.convertAndSendToUser(
-                senderEmail,
-                "/queue/status",
-                response
-        );
+            messagingTemplate.convertAndSendToUser(
+                    senderEmail,
+                    "/queue/status",
+                    response
+            );
+        });
     }
 }

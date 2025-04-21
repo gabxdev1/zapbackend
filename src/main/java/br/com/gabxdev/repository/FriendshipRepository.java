@@ -31,8 +31,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Friendsh
                         ELSE f.user1.lastName
                     END,
                     CASE
-                        WHEN f.user1.id = :currentUserId THEN f.user2.email
-                        ELSE f.user1.email
+                        WHEN f.user1.id = :currentUserId THEN f.user2.nickname
+                        ELSE f.user1.nickname
                     END,
                     CASE
                         WHEN f.user1.id = :currentUserId THEN f.user2.presence.lastSeenAt

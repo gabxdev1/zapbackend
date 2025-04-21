@@ -20,4 +20,10 @@ public class Producer {
 
         rabbitTemplate.convertAndSend(exchange, routingKey, requestWrapper);
     }
+
+    public void sendNotification(Principal principal, String exchange, String routingKey) {
+        var requestWrapper = messagingUtil.createTriggerWrapper(principal);
+
+        rabbitTemplate.convertAndSend(exchange, routingKey, requestWrapper);
+    }
 }

@@ -17,10 +17,12 @@ public class RabbitMQConfig {
         public static final String PRIVATE_MESSAGE_RECEIVED = "queue.chat.private.message.received";
         public static final String USER_PRESENCE_CHANGE = "queue.user.presence.change";
         public static final String MESSAGE_DEAD_LETTER = "queue.chat.message.dead-letter";
+        public static final String TRIGGER_OLD_MESSAGE = "queue.chat.trigger.old.message";
     }
 
     public static class RoutingKeys {
         public static final String PRIVATE_MESSAGE = "routing.chat.private.message";
+        public static final String TRIGGER_OLD_MESSAGE = "routing.chat.trigger.old.message";
         public static final String PRIVATE_MESSAGE_READ = "routing.chat.private.message.read";
         public static final String PRIVATE_MESSAGE_RECEIVED = "routing.chat.private.message.received";
         public static final String USER_PRESENCE_CHANGE = "routing.user.presence.change";
@@ -95,6 +97,15 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue oldMessageQueue() {
+        return QueueBuilder.durable(QueueNames.TRIGGER_OLD_MESSAGE)
+                .deadLetterExchange(Exchanges.DIRECT_CHAT_DEAD_LETTER)
+                .deadLetterRoutingKey(RoutingKeys.TRIGGER_OLD_MESSAGE)
+                .build();
+    }
+
+
+    @Bean
     public Queue privateMessageReadQueue() {
         return QueueBuilder.durable(QueueNames.PRIVATE_MESSAGE_READ).build();
     }
@@ -123,6 +134,14 @@ public class RabbitMQConfig {
                 .bind(privateMessageQueue())
                 .to(directExchangeChatEvents())
                 .with(RoutingKeys.PRIVATE_MESSAGE);
+    }
+
+    @Bean
+    public Binding oldMessageBinding() {
+        return BindingBuilder
+                .bind(oldMessageQueue())
+                .to(directExchangeChatEvents())
+                .with(RoutingKeys.TRIGGER_OLD_MESSAGE);
     }
 
     @Bean

@@ -1,14 +1,14 @@
 package br.com.gabxdev.dto.response.user;
 
-public record UserPutResponse(
+public record UserGetDetailsResponse(
         Long id,
 
         String firstName,
 
         String lastName,
 
-        String nickname,
+        String email,
 
-        String email
+        String nickname
 ) {
 }

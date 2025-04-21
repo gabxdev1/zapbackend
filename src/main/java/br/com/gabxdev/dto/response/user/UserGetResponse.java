@@ -7,6 +7,6 @@ public record UserGetResponse(
 
         String lastName,
 
-        String email
+        String nickname
 ) {
 }

@@ -5,6 +5,7 @@ import br.com.gabxdev.dto.request.private_message.PrivateMessageReceivedNotifica
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
 import br.com.gabxdev.messaging.producer.Producer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import static br.com.gabxdev.config.RabbitMQConfig.RoutingKeys.*;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class PrivateMessageWebSocketController {
 
     private final Producer producer;
@@ -33,5 +35,11 @@ public class PrivateMessageWebSocketController {
     @MessageMapping("/private-message-received")
     public void handlePrivateMessageReceivedEvent(@Payload PrivateMessageReceivedNotificationRequest request, Principal principal) {
         producer.sendMessage(request, principal, DIRECT_CHAT_EVENTS, PRIVATE_MESSAGE_RECEIVED);
+    }
+
+    @MessageMapping("/trigger-old-messages")
+    public void handleTriggerOldMessages(Principal principal) {
+        log.debug("trigger-old-messages: '{}'", principal.getName());
+        producer.sendNotification(principal, DIRECT_CHAT_EVENTS, TRIGGER_OLD_MESSAGE);
     }
 }

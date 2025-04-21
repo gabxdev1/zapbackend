@@ -3,7 +3,7 @@ package br.com.gabxdev.mapper;
 import br.com.gabxdev.dto.request.RegisterPostRequest;
 import br.com.gabxdev.dto.request.user.UserPutRequest;
 import br.com.gabxdev.dto.response.RegisterPostResponse;
-import br.com.gabxdev.dto.response.audit.UserAuditDetailsResponse;
+import br.com.gabxdev.dto.response.user.UserGetDetailsResponse;
 import br.com.gabxdev.dto.response.user.UserGetResponse;
 import br.com.gabxdev.dto.response.user.UserPutResponse;
 import br.com.gabxdev.model.User;
@@ -31,11 +31,11 @@ public interface UserMapper {
 
     UserGetResponse toUserGetResponse(User user);
 
+    UserGetDetailsResponse toUserGetDetailsResponse(User user);
+
     List<UserGetResponse> toUserGetResponseList(List<User> user);
 
     UserPutResponse toUserPutResponse(User user);
-
-    UserAuditDetailsResponse toUserAuditDetailsResponse(User user);
 
     default Long getIdCurrentUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();

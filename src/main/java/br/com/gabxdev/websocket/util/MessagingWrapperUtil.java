@@ -2,6 +2,7 @@ package br.com.gabxdev.websocket.util;
 
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
+import br.com.gabxdev.messaging.wrapper.TriggerWrapper;
 import br.com.gabxdev.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,15 @@ public class MessagingWrapperUtil {
 
         return new MessageWrapper<>(request, currentUser.getId(), currentUser.getEmail(), roles);
     }
+
+    public TriggerWrapper createTriggerWrapper(Principal principal) {
+        var currentUser = extractUserAndSetAuthenticationContext(principal);
+
+        var roles = extractRoles(currentUser.getAuthorities());
+
+        return new TriggerWrapper(currentUser.getId(), currentUser.getEmail(), roles);
+    }
+
 
     private List<String> extractRoles(Collection<? extends GrantedAuthority> roles) {
         return roles.stream()

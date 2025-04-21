@@ -2,7 +2,7 @@ package br.com.gabxdev.mapper;
 
 import br.com.gabxdev.Audit.Auditable;
 import br.com.gabxdev.dto.response.audit.AuditFullDetailsResponse;
-import br.com.gabxdev.dto.response.audit.UserAuditDetailsResponse;
+import br.com.gabxdev.dto.response.user.UserGetResponse;
 import br.com.gabxdev.repository.UserRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -34,11 +34,11 @@ public abstract class AuditMapper {
         return audit.build();
     }
 
-    private UserAuditDetailsResponse getUser(Long id) {
+    private UserGetResponse getUser(Long id) {
         if (id == null) return null;
 
         return userRepository.findById(id)
-                .map(u -> userMapper.toUserAuditDetailsResponse(u))
+                .map(u -> userMapper.toUserGetResponse(u))
                 .orElse(null);
     }
 }

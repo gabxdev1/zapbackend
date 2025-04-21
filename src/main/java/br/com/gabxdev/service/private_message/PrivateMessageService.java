@@ -11,13 +11,12 @@ import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.repository.PrivateMessageRepository;
 import br.com.gabxdev.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -62,8 +61,12 @@ public class PrivateMessageService {
     }
 
     @Transactional
-    public PrivateMessage updatePrivateMessageStatusSafely(UUID messageId, MessageStatus newStatus) {
+    public Optional<PrivateMessage> updatePrivateMessageStatusSafely(UUID messageId, MessageStatus newStatus) {
         var message = findByIdOrThrowNotFound(messageId);
+
+        if (!assertCurrentUserIsRecipient(message)) {
+            return Optional.empty();
+        }
 
         var currentStatus = message.getMessage().getStatus();
 
@@ -78,17 +81,26 @@ public class PrivateMessageService {
             }
         }
 
-        return repository.save(message);
+        return Optional.of(repository.save(message));
     }
 
-    public Slice<PrivateMessageGetResponse> getMessagesBetweenUsers(Long receivedId, int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    private boolean assertCurrentUserIsRecipient(PrivateMessage message) {
+        var currentUserId = authUtil.getCurrentUser().getId();
 
-        Long currentUserId = authUtil.getCurrentUser().getId();
+        return currentUserId.equals(message.getRecipient().getId());
+    }
 
-        return repository.findBySenderIdAndRecipientIdOrSenderIdAndRecipientIdOrderByCreatedAtDesc(
-                        currentUserId, receivedId, receivedId, currentUserId, pageable
-                )
-                .map(privateMessageMapper::toPrivateMessageGetResponse);
+    public List<PrivateMessageGetResponse> getAllPrivateMessages() {
+        var currentUserId = authUtil.getCurrentUser().getId();
+
+        var allPrivateMessage = repository.findAllPrivateMessage(currentUserId);
+
+        return privateMessageMapper.toPrivateMessageGetResponse(allPrivateMessage);
+    }
+
+    public List<PrivateMessage> getAllOldMessages() {
+        var currentUserId = authUtil.getCurrentUser().getId();
+
+        return repository.findAllOldPrivateMessage(currentUserId);
     }
 }

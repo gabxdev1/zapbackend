@@ -47,9 +47,9 @@ public class UserService {
             throw new EmailAlreadyExistsException("E-mail %s already exists".formatted(email));
     }
 
-    public List<User> findByEmailLikeLimit20(String email, User currentUser) {
+    public List<User> findByNicknameLikeLimit20(String nickname, User currentUser) {
         var currentUserId = currentUser.getId();
 
-        return repository.findFirst20ByEmailIgnoreCaseContainsAndIdNot(email, currentUserId);
+        return repository.findFirst20ByNicknameIgnoreCaseContainsAndIdNot(nickname, currentUserId);
     }
 }

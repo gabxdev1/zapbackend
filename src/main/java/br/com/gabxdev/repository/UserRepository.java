@@ -16,5 +16,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findFirst20ByEmailIgnoreCaseContains(@Param("email") String email);
 
-    List<User> findFirst20ByEmailIgnoreCaseContainsAndIdNot(String email, Long id);
+    List<User> findFirst20ByNicknameIgnoreCaseContainsAndIdNot(String username, Long id);
 }

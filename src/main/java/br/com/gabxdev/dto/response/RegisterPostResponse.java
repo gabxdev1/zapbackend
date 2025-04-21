@@ -7,6 +7,8 @@ public record RegisterPostResponse(
 
         String lastName,
 
+        String nickname,
+
         String email
 ) {
 }

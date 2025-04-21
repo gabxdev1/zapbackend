@@ -47,10 +47,4 @@ public class AuthController {
         return ResponseEntity.ok().body(tokenJwt);
     }
 
-    @GetMapping
-    public ResponseEntity<String> testAuth() {
-        return ResponseEntity.ok().body("Auth successful");
-    }
-
-
 }

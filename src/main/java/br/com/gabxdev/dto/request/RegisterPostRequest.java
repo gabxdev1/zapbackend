@@ -13,6 +13,9 @@ public record RegisterPostRequest(
         String lastName,
 
         @NotBlank
+        String nickname,
+
+        @NotBlank
         @Email
         String email,
 

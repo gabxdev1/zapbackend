@@ -33,7 +33,7 @@ spring:
         default-requeue-rejected: false
 zap-backend:
   jwt:
-    expiration-seconds: 3600
+    expiration-seconds: 36000
     secret-key: ${SECRET_KEY}
 logging:
   level:

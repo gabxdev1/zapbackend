@@ -1,5 +1,6 @@
 package br.com.gabxdev.dto.response.audit;
 
+import br.com.gabxdev.dto.response.user.UserGetResponse;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -8,10 +9,10 @@ import java.time.Instant;
 public record AuditFullDetailsResponse(
         Instant createdAt,
 
-        UserAuditDetailsResponse createdBy,
+        UserGetResponse createdBy,
 
         Instant updatedAt,
 
-        UserAuditDetailsResponse updatedBy
+        UserGetResponse updatedBy
 ) {
 }

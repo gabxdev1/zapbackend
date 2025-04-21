@@ -1,6 +1,7 @@
 package br.com.gabxdev.dto.response.privateMessage;
 
 import br.com.gabxdev.dto.response.audit.AuditFullDetailsResponse;
+import br.com.gabxdev.dto.response.user.UserGetResponse;
 import br.com.gabxdev.model.enums.MessageStatus;
 
 import java.time.Instant;
@@ -11,7 +12,7 @@ public record PrivateMessageGetResponse(
 
         Long senderId,
 
-        Long recipientId,
+        UserGetResponse recipient,
 
         String content,
 

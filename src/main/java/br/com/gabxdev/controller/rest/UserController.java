@@ -2,7 +2,7 @@ package br.com.gabxdev.controller.rest;
 
 import br.com.gabxdev.anotations.CurrentUser;
 import br.com.gabxdev.dto.request.user.UserPutRequest;
-import br.com.gabxdev.dto.response.privateMessage.PrivateMessageGetResponse;
+import br.com.gabxdev.dto.response.user.UserGetDetailsResponse;
 import br.com.gabxdev.dto.response.user.UserGetResponse;
 import br.com.gabxdev.dto.response.user.UserPutResponse;
 import br.com.gabxdev.mapper.UserMapper;
@@ -32,9 +32,9 @@ public class UserController {
 
     @GetMapping(path = "/search", headers = {HttpHeaders.AUTHORIZATION})
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<List<UserGetResponse>> findUserByEmail(@RequestParam String email, @CurrentUser User currentUser) {
+    public ResponseEntity<List<UserGetResponse>> findUserByNickname(@RequestParam String nickname, @CurrentUser User currentUser) {
 
-        var user = service.findByEmailLikeLimit20(email, currentUser);
+        var user = service.findByNicknameLikeLimit20(nickname, currentUser);
 
         return ResponseEntity.ok(mapper.toUserGetResponseList(user));
     }
@@ -42,11 +42,11 @@ public class UserController {
 
     @GetMapping(path = "/me", headers = {HttpHeaders.AUTHORIZATION})
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<UserGetResponse> findUserById(@CurrentUser User currentUser) {
+    public ResponseEntity<UserGetDetailsResponse> findUserById(@CurrentUser User currentUser) {
 
         var user = service.findByIdOrThrowNotFound(currentUser.getId());
 
-        return ResponseEntity.ok(mapper.toUserGetResponse(user));
+        return ResponseEntity.ok(mapper.toUserGetDetailsResponse(user));
     }
 
     @PutMapping(path = "/me", headers = {HttpHeaders.AUTHORIZATION})
