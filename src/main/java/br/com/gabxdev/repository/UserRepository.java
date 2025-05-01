@@ -2,10 +2,12 @@ package br.com.gabxdev.repository;
 
 import br.com.gabxdev.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailIgnoreCase(String email);
@@ -14,7 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
-    List<User> findFirst20ByEmailIgnoreCaseContains(@Param("email") String email);
-
     List<User> findFirst20ByNicknameIgnoreCaseContainsAndIdNot(String username, Long id);
+
+    @Query("SELECT u.email FROM User u WHERE u.id IN :ids")
+    List<String> findAllEmailsByIdIn(@Param("ids") Set<Long> ids);
 }

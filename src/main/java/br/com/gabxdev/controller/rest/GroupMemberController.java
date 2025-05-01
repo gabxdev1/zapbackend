@@ -1,9 +1,9 @@
 package br.com.gabxdev.controller.rest;
 
-import br.com.gabxdev.dto.response.groupMember.GroupMemberDeleteRequest;
-import br.com.gabxdev.dto.response.groupMember.GroupMemberDemotePostRequest;
-import br.com.gabxdev.dto.response.groupMember.GroupMemberPostRequest;
-import br.com.gabxdev.dto.response.groupMember.GroupMemberPromotePostRequest;
+import br.com.gabxdev.dto.response.group_member.GroupMemberDeleteRequest;
+import br.com.gabxdev.dto.response.group_member.GroupMemberDemotePostRequest;
+import br.com.gabxdev.dto.response.group_member.GroupMemberPostRequest;
+import br.com.gabxdev.dto.response.group_member.GroupMemberPromotePostRequest;
 import br.com.gabxdev.service.group.GroupMemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

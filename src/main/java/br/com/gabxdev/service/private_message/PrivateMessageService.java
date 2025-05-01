@@ -2,11 +2,11 @@ package br.com.gabxdev.service.private_message;
 
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.dto.request.private_message.PrivateMessageSendRequest;
-import br.com.gabxdev.dto.response.privateMessage.PrivateMessageGetResponse;
+import br.com.gabxdev.dto.response.private_message.PrivateMessageResponse;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.mapper.PrivateMessageMapper;
-import br.com.gabxdev.model.MessageEmbeddable;
 import br.com.gabxdev.model.PrivateMessage;
+import br.com.gabxdev.model.PrivateMessageEmbeddable;
 import br.com.gabxdev.model.enums.MessageStatus;
 import br.com.gabxdev.repository.PrivateMessageRepository;
 import br.com.gabxdev.service.user.UserService;
@@ -34,7 +34,7 @@ public class PrivateMessageService {
 
     private PrivateMessage findByIdOrThrowNotFound(UUID messageId) {
         return repository.findById(messageId)
-                .orElseThrow(() -> new NotFoundException("Private message %d not found".formatted(messageId)));
+                .orElseThrow(() -> new NotFoundException("Private message %s not found".formatted(messageId)));
     }
 
     public PrivateMessage savePrivateMessage(PrivateMessageSendRequest request) {
@@ -45,7 +45,7 @@ public class PrivateMessageService {
 
         var recipient = userService.findByIdOrThrowNotFound(recipientId);
 
-        var message = MessageEmbeddable.builder()
+        var message = PrivateMessageEmbeddable.builder()
                 .content(request.content())
                 .status(MessageStatus.SENT)
                 .build();
@@ -68,6 +68,10 @@ public class PrivateMessageService {
             return Optional.empty();
         }
 
+        if (assertMessageNotRead(message)) {
+            return Optional.empty();
+        }
+
         var currentStatus = message.getMessage().getStatus();
 
         if (newStatus.status > currentStatus.status) {
@@ -84,23 +88,27 @@ public class PrivateMessageService {
         return Optional.of(repository.save(message));
     }
 
-    private boolean assertCurrentUserIsRecipient(PrivateMessage message) {
-        var currentUserId = authUtil.getCurrentUser().getId();
-
-        return currentUserId.equals(message.getRecipient().getId());
-    }
-
-    public List<PrivateMessageGetResponse> getAllPrivateMessages() {
+    public List<PrivateMessageResponse> getAllPrivateMessages() {
         var currentUserId = authUtil.getCurrentUser().getId();
 
         var allPrivateMessage = repository.findAllPrivateMessage(currentUserId);
 
-        return privateMessageMapper.toPrivateMessageGetResponse(allPrivateMessage);
+        return privateMessageMapper.toPrivateMessageResponse(allPrivateMessage);
     }
 
     public List<PrivateMessage> getAllOldMessages() {
         var currentUserId = authUtil.getCurrentUser().getId();
 
         return repository.findAllOldPrivateMessage(currentUserId);
+    }
+
+    private boolean assertCurrentUserIsRecipient(PrivateMessage message) {
+        var currentUserId = authUtil.getCurrentUser().getId();
+
+        return currentUserId.equals(message.getRecipient().getId());
+    }
+
+    public boolean assertMessageNotRead(PrivateMessage message) {
+        return message.getMessage().getStatus().equals(MessageStatus.READ);
     }
 }

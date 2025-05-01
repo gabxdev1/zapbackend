@@ -1,4 +1,4 @@
-package br.com.gabxdev.dto.response.privateMessage;
+package br.com.gabxdev.dto.response.private_message;
 
 import br.com.gabxdev.model.enums.MessageStatus;
 import lombok.Builder;

@@ -12,6 +12,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "user")
+@Builder
 public class UserPresence {
 
     @Id

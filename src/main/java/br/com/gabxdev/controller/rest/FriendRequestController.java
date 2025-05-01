@@ -3,9 +3,9 @@ package br.com.gabxdev.controller.rest;
 import br.com.gabxdev.dto.request.friend_request.FriendRequestDeleteRequest;
 import br.com.gabxdev.dto.request.friend_request.FriendRequestPostRequest;
 import br.com.gabxdev.dto.request.friend_request.FriendRequestPutRequest;
-import br.com.gabxdev.dto.response.projection.ReceivedPendingFriendRequestProjection;
 import br.com.gabxdev.dto.response.projection.SentPendingFriendRequestProjection;
 import br.com.gabxdev.mapper.FriendRequestMapper;
+import br.com.gabxdev.notification.dto.ReceivedPendingFriendRequestNotifier;
 import br.com.gabxdev.service.friend_request.FriendRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users/friends-requests")
@@ -30,12 +32,14 @@ public class FriendRequestController {
 
     @GetMapping(path = "/received/pending", headers = HttpHeaders.AUTHORIZATION)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Page<ReceivedPendingFriendRequestProjection>> getPendingReceivedRequests(Pageable pageable) {
+    public ResponseEntity<List<ReceivedPendingFriendRequestNotifier>> getPendingReceivedRequests() {
         log.info("Received request to get pending received friend requests");
 
-        var pendingReceivedRequests = service.getPendingReceivedRequests(pageable);
+        var pendingReceivedRequests = service.getPendingReceivedRequests();
 
-        return ResponseEntity.ok(pendingReceivedRequests);
+        var response = mapper.toReceivedPendingFriendRequestNotifier(pendingReceivedRequests);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(path = "/sent/pending", headers = HttpHeaders.AUTHORIZATION)

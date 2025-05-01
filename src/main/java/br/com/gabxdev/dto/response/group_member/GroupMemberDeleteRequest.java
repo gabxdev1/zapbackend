@@ -1,4 +1,4 @@
-package br.com.gabxdev.dto.response.groupMember;
+package br.com.gabxdev.dto.response.group_member;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

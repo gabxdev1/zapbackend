@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class GroupMessageReadId {
+public class GroupMessageStatusId {
 
     @Column(name = "group_message_id", nullable = false)
     private UUID groupMessageId;

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import java.security.Principal;
 
 import static br.com.gabxdev.config.RabbitMQConfig.Exchanges.DIRECT_CHAT_EVENTS;
+import static br.com.gabxdev.config.RabbitMQConfig.Exchanges.DIRECT_TRIGGER_SESSION_SYNC;
 import static br.com.gabxdev.config.RabbitMQConfig.RoutingKeys.*;
 
 @Controller
@@ -23,12 +24,12 @@ public class PrivateMessageWebSocketController {
     private final Producer producer;
 
     @MessageMapping("/private-message")
-    public void handlePrivateMessage(@Payload PrivateMessageSendRequest request, Principal principal) {
+    public void handlePrivateMessageEvent(@Payload PrivateMessageSendRequest request, Principal principal) {
         producer.sendMessage(request, principal, DIRECT_CHAT_EVENTS, PRIVATE_MESSAGE);
     }
 
     @MessageMapping("/private-message-read")
-    public void handleReadMessageEvent(@Payload PrivateMessageReadNotificationRequest request, Principal principal) {
+    public void handleGroupMessageReadEvent(@Payload PrivateMessageReadNotificationRequest request, Principal principal) {
         producer.sendMessage(request, principal, DIRECT_CHAT_EVENTS, PRIVATE_MESSAGE_READ);
     }
 
@@ -37,9 +38,10 @@ public class PrivateMessageWebSocketController {
         producer.sendMessage(request, principal, DIRECT_CHAT_EVENTS, PRIVATE_MESSAGE_RECEIVED);
     }
 
-    @MessageMapping("/trigger-old-messages")
-    public void handleTriggerOldMessages(Principal principal) {
-        log.debug("trigger-old-messages: '{}'", principal.getName());
-        producer.sendNotification(principal, DIRECT_CHAT_EVENTS, TRIGGER_OLD_MESSAGE);
+    @MessageMapping("/session-sync")
+    public void handleTriggerOldMessagesEvent(Principal principal) {
+        log.debug("session-sync: '{}'", principal.getName());
+
+        producer.sessionSyncNotification(principal, DIRECT_TRIGGER_SESSION_SYNC, SESSION_SYNC);
     }
 }

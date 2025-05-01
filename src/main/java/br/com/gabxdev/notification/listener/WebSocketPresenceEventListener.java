@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.time.Instant;
@@ -21,21 +20,6 @@ import static br.com.gabxdev.config.RabbitMQConfig.RoutingKeys.USER_PRESENCE_CHA
 public class WebSocketPresenceEventListener {
 
     private final Producer producer;
-
-    @EventListener
-    public void handleWebSocketConnect(SessionConnectedEvent event) {
-        var request = UserPresenceStatusEvent.builder()
-                .status(UserStatus.ONLINE)
-                .lastSeenAt(Instant.now())
-                .build();
-
-        var email = event.getUser().getName();
-
-        log.debug("WebSocket connected - UserEmail: {}", email);
-
-        producer.sendMessage(request, event.getUser(), DIRECT_USER_EVENTS, USER_PRESENCE_CHANGE);
-    }
-
 
     @EventListener
     public void handleWebSocketDisconnect(SessionDisconnectEvent event) {

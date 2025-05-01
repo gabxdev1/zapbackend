@@ -1,5 +1,7 @@
 package br.com.gabxdev.service.user;
 
+import br.com.gabxdev.commons.AuthUtil;
+import br.com.gabxdev.model.UserPresence;
 import br.com.gabxdev.model.enums.UserStatus;
 import br.com.gabxdev.repository.UserPresenceRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -14,6 +17,7 @@ import java.time.Instant;
 public class UserPresenceService {
 
     private final UserPresenceRepository userPresence;
+    private final AuthUtil authUtil;
 
     public void markOnline(Long userId) {
         log.debug("Marking user as ONLINE - ID: {}", userId);
@@ -37,5 +41,9 @@ public class UserPresenceService {
 
                     userPresence.save(user);
                 });
+    }
+
+    public List<UserPresence> findAllUserStatusRelatedCurrentUser(Long currentUserId) {
+        return userPresence.findAllUserStatusRelatedCurrentUser(currentUserId);
     }
 }

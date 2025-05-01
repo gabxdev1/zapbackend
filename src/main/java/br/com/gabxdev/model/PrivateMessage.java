@@ -28,5 +28,5 @@ public class PrivateMessage extends Auditable {
     private User recipient;
 
     @Embedded
-    private MessageEmbeddable message;
+    private PrivateMessageEmbeddable message;
 }

@@ -9,6 +9,9 @@ import br.com.gabxdev.model.GroupMember;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.Mappings;
+
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {AuditMapper.class})
 public interface GroupMapper {
@@ -19,8 +22,16 @@ public interface GroupMapper {
     @Mapping(source = ".", target = "audit")
     GroupMemberPostResponse toGroupPostResponse(GroupMember member);
 
-    @Mapping(source = ".", target = "audit")
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "description", source = "description"),
+            @Mapping(target = "members", source = "members"),
+            @Mapping(target = "audit", source = ".")
+    })
     GroupGetResponse toGroupGetResponse(Group group);
+
+    List<GroupGetResponse> toGroupGetResponse(List<Group> groups);
 
     GroupPutResponse toGroupPutResponse(Group group);
 }

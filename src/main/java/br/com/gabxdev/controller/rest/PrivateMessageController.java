@@ -1,10 +1,8 @@
 package br.com.gabxdev.controller.rest;
 
-import br.com.gabxdev.dto.response.privateMessage.PrivateMessageGetResponse;
+import br.com.gabxdev.dto.response.private_message.PrivateMessageResponse;
 import br.com.gabxdev.service.private_message.PrivateMessageService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/private-message")
 @RequiredArgsConstructor
-@Log4j2
 public class PrivateMessageController {
 
 
@@ -25,7 +22,7 @@ public class PrivateMessageController {
 
     @GetMapping(headers = HttpHeaders.AUTHORIZATION)
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<List<PrivateMessageGetResponse>> findAllPrivateMessages() {
+    public ResponseEntity<List<PrivateMessageResponse>> findAllPrivateMessages() {
         var messagesBetweenUsers = privateMessageService.getAllPrivateMessages();
 
         return ResponseEntity.ok(messagesBetweenUsers);

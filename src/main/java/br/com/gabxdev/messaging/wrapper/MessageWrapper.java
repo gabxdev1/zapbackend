@@ -1,7 +1,6 @@
 package br.com.gabxdev.messaging.wrapper;
 
 import lombok.Builder;
-import lombok.ToString;
 
 import java.util.List;
 

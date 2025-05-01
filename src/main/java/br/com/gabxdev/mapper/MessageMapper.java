@@ -1,6 +1,6 @@
 package br.com.gabxdev.mapper;
 
-import br.com.gabxdev.dto.response.privateMessage.MessageStatusNotification;
+import br.com.gabxdev.dto.response.private_message.MessageStatusNotification;
 import br.com.gabxdev.model.PrivateMessage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

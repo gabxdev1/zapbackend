@@ -10,7 +10,7 @@ public interface UserPendingFriendRequestGetProjection {
 
     String getLastName();
 
-    String getEmail();
+    String getNickname();
 
     Instant getCreatedAt();
 }

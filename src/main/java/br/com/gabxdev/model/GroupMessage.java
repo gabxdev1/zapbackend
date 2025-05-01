@@ -1,6 +1,7 @@
 package br.com.gabxdev.model;
 
 import br.com.gabxdev.Audit.Auditable;
+import br.com.gabxdev.model.enums.MessageStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class GroupMessage extends Auditable {
 
     @Id
@@ -23,9 +24,13 @@ public class GroupMessage extends Auditable {
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "recipient_id", nullable = false, updatable = false)
-    private Group recipient;
+    @JoinColumn(name = "group_id", nullable = false, updatable = false)
+    private Group group;
 
-    @Embedded
-    private MessageEmbeddable message;
+    @Column(nullable = false, length = 2000)
+    private String content;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MessageStatus status;
 }

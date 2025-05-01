@@ -27,6 +27,14 @@ public class MessagingWrapperUtil {
         return new MessageWrapper<>(request, currentUser.getId(), currentUser.getEmail(), roles);
     }
 
+    public <T> MessageWrapper<T> createMessageWrapper(T request) {
+        var currentUser = authUtil.getCurrentUser();
+
+        var roles = extractRoles(currentUser.getAuthorities());
+
+        return new MessageWrapper<>(request, currentUser.getId(), currentUser.getEmail(), roles);
+    }
+
     public TriggerWrapper createTriggerWrapper(Principal principal) {
         var currentUser = extractUserAndSetAuthenticationContext(principal);
 

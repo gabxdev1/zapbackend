@@ -12,20 +12,18 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OldMessageNotifier {
+public class SyncSessionNotifier {
 
     private final SimpMessagingTemplate messagingTemplate;
 
     private final PrivateMessageMapper privateMessageMapper;
 
     public void notifyUser(List<PrivateMessage> messages, String email) {
-        privateMessageMapper
-                .toPrivateMessageGetResponse(messages)
+        privateMessageMapper.toPrivateMessageResponse(messages)
                 .forEach(privateMessage ->
                         messagingTemplate.convertAndSendToUser(
                                 email,
                                 "/queue/messages",
-                                privateMessage
-                        ));
+                                privateMessage));
     }
 }

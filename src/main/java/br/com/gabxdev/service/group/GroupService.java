@@ -5,14 +5,20 @@ import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
+import br.com.gabxdev.messaging.producer.Producer;
 import br.com.gabxdev.model.Group;
+import br.com.gabxdev.notification.dto.GroupCreatedNotification;
 import br.com.gabxdev.repository.GroupRepository;
 import br.com.gabxdev.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static br.com.gabxdev.config.RabbitMQConfig.Exchanges.TOPIC_GROUP_EVENTS;
+import static br.com.gabxdev.config.RabbitMQConfig.RoutingKeys.GROUP_CREATED_NOTIFICATION;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +34,15 @@ public class GroupService {
 
     private final UserRelationshipRules userRelationshipRules;
 
+    private final Producer producer;
+
     private Optional<Group> findById(Long groupId) {
         return repository.findById(groupId);
+    }
+
+    public Group findGroupFullDetailsByIdOrThrow(Long groupId) {
+        return repository.findGroupByIdFullDetails(groupId)
+                .orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
     }
 
     public Group findByIdOrThrowNotFound(Long groupId) {
@@ -37,13 +50,10 @@ public class GroupService {
                 .orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
     }
 
-    public Group getGroupFullDetails(Long groupId) {
+    public List<Group> getGroupFullDetails() {
         var currentUserId = auth.getCurrentUser().getId();
 
-        groupMembershipRules.assertUserIsMemberOfGroupThrowForbidden(groupId, currentUserId);
-
-        return repository.findByIdFullDetails(groupId)
-                .orElseThrow(() -> new NotFoundException("Group %d not found".formatted(groupId)));
+        return repository.findAllGroupsFullDetailsForUser(currentUserId);
     }
 
     public Group createGroup(String name, String description, Set<Long> memberIds) {
@@ -62,7 +72,14 @@ public class GroupService {
             newGroup.addMember(newMember, false);
         });
 
-        return repository.save(newGroup);
+        var newGroupSaved = repository.save(newGroup);
+
+        var groupCreatedNotifier = GroupCreatedNotification
+                .builder().groupId(newGroupSaved.getId()).membersId(memberIds).build();
+
+        producer.sendMessage(groupCreatedNotifier, TOPIC_GROUP_EVENTS, GROUP_CREATED_NOTIFICATION);
+
+        return newGroupSaved;
     }
 
     public Group updateGroup(Long groupId, String name, String description) {

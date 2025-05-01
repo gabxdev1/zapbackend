@@ -1,8 +1,7 @@
 package br.com.gabxdev.mapper;
 
 import br.com.gabxdev.dto.response.chat.MessageSummaryResponse;
-import br.com.gabxdev.dto.response.privateMessage.PrivateMessageGetResponse;
-import br.com.gabxdev.dto.response.privateMessage.PrivateMessageNotificationResponse;
+import br.com.gabxdev.dto.response.private_message.PrivateMessageResponse;
 import br.com.gabxdev.model.PrivateMessage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,7 +23,7 @@ public interface PrivateMessageMapper {
             @Mapping(source = "privateMessage.message.readAt", target = "readAt"),
             @Mapping(source = "privateMessage.message.receivedAt", target = "receivedAt"),
     })
-    PrivateMessageGetResponse toPrivateMessageGetResponse(PrivateMessage privateMessage);
+    PrivateMessageResponse toPrivateMessageResponse(PrivateMessage privateMessage);
 
     @Mappings({
             @Mapping(source = ".", target = "audit"),
@@ -36,7 +35,7 @@ public interface PrivateMessageMapper {
             @Mapping(source = "privateMessage.message.readAt", target = "readAt"),
             @Mapping(source = "privateMessage.message.receivedAt", target = "receivedAt"),
     })
-    List<PrivateMessageGetResponse> toPrivateMessageGetResponse(List<PrivateMessage> privateMessage);
+    List<PrivateMessageResponse> toPrivateMessageResponse(List<PrivateMessage> privateMessage);
 
     @Mappings({
             @Mapping(source = ".", target = "audit"),

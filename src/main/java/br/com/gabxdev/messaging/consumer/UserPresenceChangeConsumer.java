@@ -1,6 +1,5 @@
 package br.com.gabxdev.messaging.consumer;
 
-import br.com.gabxdev.config.RabbitMQConfig;
 import br.com.gabxdev.messaging.wrapper.MessageWrapper;
 import br.com.gabxdev.model.enums.UserStatus;
 import br.com.gabxdev.notification.dto.UserPresenceStatusEvent;

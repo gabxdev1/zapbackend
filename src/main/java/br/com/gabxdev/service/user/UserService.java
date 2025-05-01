@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -52,4 +53,9 @@ public class UserService {
 
         return repository.findFirst20ByNicknameIgnoreCaseContainsAndIdNot(nickname, currentUserId);
     }
+
+    public List<String> findAllEmailsByIdIn(Set<Long> usersId) {
+        return repository.findAllEmailsByIdIn(usersId);
+    }
+
 }

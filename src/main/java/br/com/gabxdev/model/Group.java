@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @EqualsAndHashCode(of = "id", callSuper = false)
 @NamedEntityGraphs({
         @NamedEntityGraph(

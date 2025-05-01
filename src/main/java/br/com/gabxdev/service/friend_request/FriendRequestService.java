@@ -2,16 +2,17 @@ package br.com.gabxdev.service.friend_request;
 
 import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
-import br.com.gabxdev.dto.response.projection.ReceivedPendingFriendRequestProjection;
 import br.com.gabxdev.dto.response.projection.SentPendingFriendRequestProjection;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
 import br.com.gabxdev.exception.UserBlockedException;
+import br.com.gabxdev.mapper.FriendRequestMapper;
 import br.com.gabxdev.model.FriendRequest;
 import br.com.gabxdev.model.Friendship;
 import br.com.gabxdev.model.enums.RequestStatus;
 import br.com.gabxdev.model.pk.FriendRequestId;
 import br.com.gabxdev.model.pk.FriendshipId;
+import br.com.gabxdev.notification.notifier.FriendRequestNotifier;
 import br.com.gabxdev.repository.FriendRequestRepository;
 import br.com.gabxdev.repository.FriendshipRepository;
 import br.com.gabxdev.service.user.UserService;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,10 @@ public class FriendRequestService {
 
     private final UserRelationshipRules rules;
 
+    private final FriendRequestNotifier friendRequestNotifier;
+
+    private final FriendRequestMapper friendRequestMapper;
+
     public FriendRequest findByIdOrElseThrowNotFound(FriendRequestId id) {
         return friendRequestRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Friend request %s not found".formatted(id)));
@@ -46,10 +53,10 @@ public class FriendRequestService {
         return friendRequestRepository.findAllById_SenderIdAndStatusNot(currentUser.getId(), RequestStatus.ACCEPTED, pageable);
     }
 
-    public Page<ReceivedPendingFriendRequestProjection> getPendingReceivedRequests(Pageable pageable) {
+    public List<FriendRequest> getPendingReceivedRequests() {
         var currentUser = authUtil.getCurrentUser();
 
-        return friendRequestRepository.findAllById_ReceiverIdAndStatusNot(currentUser.getId(), RequestStatus.ACCEPTED, pageable);
+        return friendRequestRepository.findAllById_ReceiverIdAndStatusNot(currentUser.getId(), RequestStatus.ACCEPTED);
     }
 
     public void sendFriendRequest(FriendRequestId friendRequestId) {
@@ -73,7 +80,9 @@ public class FriendRequestService {
                 .status(RequestStatus.PENDING)
                 .build();
 
-        friendRequestRepository.save(friendRequest);
+        var newRequest = friendRequestRepository.save(friendRequest);
+
+        friendRequestNotifier.notifyUser(friendRequestMapper.toReceivedPendingFriendRequestNotifier(newRequest), userReceiver.getEmail());
     }
 
     @Transactional

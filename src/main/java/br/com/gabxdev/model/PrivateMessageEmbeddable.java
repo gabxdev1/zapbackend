@@ -15,7 +15,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Getter
 @Setter
-public class MessageEmbeddable {
+public class PrivateMessageEmbeddable {
 
     @Column(nullable = false, length = 2000)
     private String content;

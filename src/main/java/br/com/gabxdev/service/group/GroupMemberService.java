@@ -5,8 +5,11 @@ import br.com.gabxdev.Rules.UserRelationshipRules;
 import br.com.gabxdev.commons.AuthUtil;
 import br.com.gabxdev.exception.ForbiddenException;
 import br.com.gabxdev.exception.NotFoundException;
+import br.com.gabxdev.messaging.producer.Producer;
+import br.com.gabxdev.model.Group;
 import br.com.gabxdev.model.GroupMember;
 import br.com.gabxdev.model.pk.GroupMemberId;
+import br.com.gabxdev.notification.dto.GroupNewMemberNotification;
 import br.com.gabxdev.repository.GroupMemberRepository;
 import br.com.gabxdev.repository.GroupRepository;
 import br.com.gabxdev.service.user.UserService;
@@ -14,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+
+import static br.com.gabxdev.config.RabbitMQConfig.Exchanges.TOPIC_GROUP_EVENTS;
+import static br.com.gabxdev.config.RabbitMQConfig.RoutingKeys.GROUP_NEW_MEMBER_NOTIFICATION;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +38,8 @@ public class GroupMemberService {
     private final UserRelationshipRules userRelationshipRules;
 
     private final AuthUtil auth;
+
+    private final Producer producer;
 
     public GroupMember findByIdOrThrowNotFound(GroupMemberId id) {
         return groupMemberRepository.findById(id)
@@ -56,6 +64,11 @@ public class GroupMemberService {
         });
 
         groupRepository.save(group);
+
+        var groupNewMemberNotification = GroupNewMemberNotification
+                .builder().groupId(groupId).build();
+
+        producer.sendMessage(groupNewMemberNotification, TOPIC_GROUP_EVENTS, GROUP_NEW_MEMBER_NOTIFICATION);
     }
 
     public void removeMember(Long groupId, Long userToRemoveId) {
@@ -137,5 +150,9 @@ public class GroupMemberService {
         if (groupMemberRepository.existsByIdAndCreatedBy(groupMemberId, userId)) {
             throw new ForbiddenException("You do not have permission to perform this action on the group creator");
         }
+    }
+
+    public int countMembersByGroup(Group group) {
+        return groupMemberRepository.countGroupMemberByGroup(group);
     }
 }

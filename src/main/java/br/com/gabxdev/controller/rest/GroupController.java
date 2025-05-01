@@ -18,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/groups")
 @RequiredArgsConstructor
@@ -30,14 +32,14 @@ public class GroupController {
 
     private final GroupMapper mapper;
 
-    @GetMapping(path = "/{id}", headers = HttpHeaders.AUTHORIZATION)
+    @GetMapping(headers = HttpHeaders.AUTHORIZATION)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<GroupGetResponse> getGroupFullDetails(@NotNull @Min(1) @PathVariable Long id) {
-        var groupFullDetails = service.getGroupFullDetails(id);
+    public ResponseEntity<List<GroupGetResponse>> getAllGroupFullDetailsForUser() {
+        var groupFullDetailsList = service.getGroupFullDetails();
 
-        var groupGetResponse = mapper.toGroupGetResponse(groupFullDetails);
+        var groupGetResponseList = mapper.toGroupGetResponse(groupFullDetailsList);
 
-        return ResponseEntity.ok(groupGetResponse);
+        return ResponseEntity.ok(groupGetResponseList);
     }
 
     @PostMapping(headers = HttpHeaders.AUTHORIZATION)
