@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?TimeZone=UTC
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  rabbitmq:
+    host: ${RABBIT_HOST}
+    port: ${RABBIT_PORT}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
+    listener:
+      simple:
+        default-requeue-rejected: false
+zap-backend:
+  jwt:
+    secret-key: ${SECRET_KEY}
+  stomp-broker-relay:
+    relay-host: ${RELAY_HOST}
+    relay-port: ${RELAY_PORT}
+    client-login: ${CLIENT_LOGIN}
+    client-passcode: ${CLIENT_PASSCODE}
+    system-login: ${SYSTEM_LOGIN}
+    system-passcode: ${SYSTEM_PASSCODE}
+logging:
+  level:
+    org.springframework.security: error
+    br.com.gabxdev: error
+server:
+  port: 443
+  ssl:
+    key-store: file:/etc/letsencrypt/live/api.gabxdev.com.br/keystore.p12
+    key-store-password: ${KEY_STORE_PASSWORD}
+    key-store-type: PKCS12
+    key-alias: springboot
+    enabled: true
