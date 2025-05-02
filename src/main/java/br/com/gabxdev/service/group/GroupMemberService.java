@@ -66,7 +66,7 @@ public class GroupMemberService {
         groupRepository.save(group);
 
         var groupNewMemberNotification = GroupNewMemberNotification
-                .builder().groupId(groupId).build();
+                .builder().groupId(groupId).newMembersIds(userIds).build();
 
         producer.sendMessage(groupNewMemberNotification, TOPIC_GROUP_EVENTS, GROUP_NEW_MEMBER_NOTIFICATION);
     }

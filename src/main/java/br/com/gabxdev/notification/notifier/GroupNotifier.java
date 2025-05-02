@@ -1,6 +1,7 @@
 package br.com.gabxdev.notification.notifier;
 
 import br.com.gabxdev.dto.response.group.GroupGetResponse;
+import br.com.gabxdev.notification.dto.GroupDataNotifierToNewMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class GroupNotifier {
         });
     }
 
-    public void notifyNewMember(List<String> emails, GroupGetResponse message) {
+    public void notifyNewMember(List<String> emails, GroupGetResponse message, List<GroupDataNotifierToNewMember> groupDataNotifierToNewMember) {
         emails.forEach(email -> {
             messagingTemplate.convertAndSendToUser(
                     email,
@@ -30,5 +31,11 @@ public class GroupNotifier {
                     message);
         });
 
+        groupDataNotifierToNewMember.forEach(groupDataNotifier -> {
+            messagingTemplate.convertAndSendToUser(
+                    groupDataNotifier.userEmail(),
+                    "/queue/group-message",
+                    groupDataNotifier.groupMessageResponses());
+        });
     }
 }

@@ -22,7 +22,7 @@ public interface GroupMessageStatusRepository extends JpaRepository<GroupMessage
                   AND gms.id.userId = :userId
                   AND gms.status <> 'READ'
             """)
-    int markAsRead(@Param("userId") Long userId, @Param("groupMessageId") UUID groupMessageId);
+    void markAsRead(@Param("userId") Long userId, @Param("groupMessageId") UUID groupMessageId);
 
 
     @Query("""
@@ -38,6 +38,21 @@ public interface GroupMessageStatusRepository extends JpaRepository<GroupMessage
                 )
             """)
     List<GroupMessageStatus> findAllGroupMessageStatusForUser(@Param("userId") Long userId);
+
+    @Query("""
+              SELECT gms
+              FROM GroupMessageStatus gms
+              JOIN gms.message msg
+              JOIN msg.group g
+              JOIN GroupMember gm ON gm.group.id = g.id
+              WHERE gm.user.id = :userId
+              AND (
+                      msg.sender.id = :userId
+                      OR gms.id.userId = :userId
+                )
+              AND gms.message.group.id = :groupId
+            """)
+    List<GroupMessageStatus> findAllGroupMessageStatusByGroupIdForUser(@Param("userId") Long userId, @Param("groupId") Long groupId);
 
 
     int countFirstByMessage(GroupMessage groupMessage);

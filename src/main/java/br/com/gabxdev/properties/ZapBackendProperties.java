@@ -19,6 +19,9 @@ public class ZapBackendProperties {
     @Valid
     private Jwt jwt;
 
+    @Valid
+    private StompBrokerRelay stompBrokerRelay;
+
     @Getter
     @Setter
     public static class Jwt {
@@ -27,5 +30,27 @@ public class ZapBackendProperties {
 
         @NotNull
         private long expirationSeconds;
+    }
+
+    @Getter
+    @Setter
+    public static class StompBrokerRelay {
+        @NotBlank
+        private String relayHost;
+
+        @NotNull
+        private int relayPort;
+
+        @NotBlank
+        private String clientLogin;
+
+        @NotBlank
+        private String clientPasscode;
+
+        @NotBlank
+        private String systemLogin;
+
+        @NotBlank
+        private String systemPasscode;
     }
 }

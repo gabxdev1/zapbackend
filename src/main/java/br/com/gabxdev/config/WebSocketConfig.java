@@ -1,5 +1,6 @@
 package br.com.gabxdev.config;
 
+import br.com.gabxdev.properties.ZapBackendProperties;
 import br.com.gabxdev.websocket.interceptor.JwtHandshakeInterceptor;
 import br.com.gabxdev.websocket.interceptor.WebSocketAuthChannelInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +20,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
+    private final ZapBackendProperties properties;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableStompBrokerRelay("/topic", "/queue")
-                .setRelayHost("localhost")
-                .setRelayPort(61613)
-                .setClientLogin("guest")
-                .setClientPasscode("guest")
-                .setSystemLogin("guest")
-                .setSystemPasscode("guest");
+                .setRelayHost(properties.getStompBrokerRelay().getRelayHost())
+                .setRelayPort(properties.getStompBrokerRelay().getRelayPort())
+                .setClientLogin(properties.getStompBrokerRelay().getClientLogin())
+                .setClientPasscode(properties.getStompBrokerRelay().getClientPasscode())
+                .setSystemLogin(properties.getStompBrokerRelay().getSystemLogin())
+                .setSystemPasscode(properties.getStompBrokerRelay().getSystemPasscode());
 
         registry.setApplicationDestinationPrefixes("/app");
         registry.setUserDestinationPrefix("/user");

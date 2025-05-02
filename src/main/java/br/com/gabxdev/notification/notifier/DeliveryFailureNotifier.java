@@ -20,7 +20,6 @@ public class DeliveryFailureNotifier {
                 .messageId(messageId)
                 .message("The message could not be delivered.")
                 .build();
-        log.debug("{}", payload);
 
         messagingTemplate.convertAndSendToUser(
                 email,

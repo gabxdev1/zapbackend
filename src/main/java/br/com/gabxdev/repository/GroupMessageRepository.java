@@ -20,4 +20,16 @@ public interface GroupMessageRepository extends JpaRepository<GroupMessage, UUID
             )
             """)
     List<GroupMessage> findAllGroupMessageForUser(@Param("userId") Long userId);
+
+    @Query("""
+            SELECT gm
+            FROM GroupMessage gm
+            WHERE gm.group.id IN (
+                SELECT gmbr.group.id
+                FROM GroupMember gmbr
+                WHERE gmbr.user.id = :userId
+            )
+            AND gm.group.id = :groupId
+            """)
+    List<GroupMessage> findAllGroupMessageByGroupIdForUser(@Param("userId") Long userId, @Param("groupId") Long groupId);
 }

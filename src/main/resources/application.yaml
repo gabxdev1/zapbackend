@@ -35,6 +35,13 @@ zap-backend:
   jwt:
     expiration-seconds: 36000
     secret-key: ${SECRET_KEY}
+  stomp-broker-relay:
+    relay-host: ${RELAY_HOST}
+    relay-port: ${RELAY_PORT}
+    client-login: ${CLIENT_LOGIN}
+    client-passcode: ${CLIENT_PASSCODE}
+    system-login: ${SYSTEM_LOGIN}
+    system-passcode: ${SYSTEM_PASSCODE}
 logging:
   level:
     org.springframework.security: debug
