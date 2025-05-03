@@ -1,8 +1,6 @@
 spring:
   application:
     name: ZapBackend
-#  config:
-#    import: optional:classpath:.env[.properties]
   threads:
     virtual:
       enabled: true
