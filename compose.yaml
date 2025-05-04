@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16.8-alpine3.20
+    container_name: zapbackend-db
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: zapbackend
+      TZ: UTC
+    ports:
+      - "5432:5432"
+    volumes:
+      - zapbackend-db:/var/lib/postgresql/data
+    networks:
+      - zapbackend-network
+
+  #  pgadmin4:
+  #    image: dpage/pgadmin4:9.0.0
+  #    container_name: zapbackend-pgadmin4
+  #    environment:
+  #      PGADMIN_DEFAULT_PASSWORD: admin
+  #      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #    ports:
+  #      - "15432:80"
+  #    networks:
+  #      - zapbackend-network
+
+  rabbitmq:
+    image: rabbitmq:4.0.7-management-alpine
+    container_name: rabbitmq
+    hostname: rabbitmq
+    restart: always
+    networks:
+      - "zapbackend-network"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      TZ: UTC
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  zapbackend-db:
+    driver: local
+  rabbitmq_data:
+
+networks:
+  zapbackend-network:
+    driver: bridge
